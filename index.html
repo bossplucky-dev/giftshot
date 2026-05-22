@@ -209,12 +209,62 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
 .success-sub{font-size:14px;color:var(--ink-light);line-height:1.6;margin-bottom:24px}
 .success-close{background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 
-/* SPLASH */
-#splash{position:fixed;inset:0;z-index:200;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}
-#splash.hide{opacity:0;pointer-events:none}
-.splash-logo{font-size:52px;font-weight:900;color:#fff;letter-spacing:-2px}
-.splash-logo span{color:var(--brand)}
-.splash-sub{font-size:14px;color:#666;margin-top:8px}
+/* ONBOARDING */
+.ob-screen{flex:1;display:flex;flex-direction:column;padding:32px 24px 100px}
+.ob-logo{font-size:28px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px}
+.ob-logo span{color:var(--brand)}
+.ob-tagline{font-size:13px;color:var(--ink-light);margin-bottom:32px}
+.ob-title{font-size:26px;font-weight:900;line-height:1.25;letter-spacing:-.5px;margin-bottom:8px}
+.ob-title em{color:var(--brand);font-style:normal}
+.ob-sub{font-size:13px;color:var(--ink-light);line-height:1.6;margin-bottom:24px}
+.ob-privacy{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:24px}
+.ob-privacy-icon{font-size:20px;flex-shrink:0}
+.ob-privacy-text{font-size:12px;color:var(--ink-mid);line-height:1.5}
+.ob-privacy-text strong{font-weight:700;color:var(--ink)}
+.seg-group{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.seg-label{font-size:12px;font-weight:700;color:var(--ink-mid)}
+.seg-row{display:flex;gap:8px;flex-wrap:wrap}
+.seg-btn{padding:9px 18px;border-radius:22px;border:1.5px solid var(--border);background:var(--surface);font-size:14px;font-weight:500;color:var(--ink-mid);cursor:pointer;font-family:inherit;transition:all .15s}
+.seg-btn.on{border-color:var(--ink);background:var(--ink);color:#fff}
+.person-input-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.person-input-row{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.person-input-emoji{font-size:24px;flex-shrink:0}
+.person-input-info{flex:1}
+.person-input-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.person-input-detail{font-size:12px;color:var(--ink-light)}
+.person-input-add{font-size:12px;color:var(--brand);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit}
+.perm-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.perm-item{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.perm-icon{font-size:26px;flex-shrink:0}
+.perm-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.perm-desc{font-size:11px;color:var(--ink-light)}
+.perm-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--brand-light);color:var(--brand);white-space:nowrap}
+.match-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.match-header{background:var(--ink);padding:14px 16px;display:flex;align-items:center;gap:10px}
+.match-who{font-size:14px;color:#fff;font-weight:700}
+.match-tier{font-size:11px;color:#888}
+.match-contact{padding:14px 16px}
+.match-contact-name{font-size:18px;font-weight:900;margin-bottom:2px}
+.match-contact-num{font-size:13px;color:var(--ink-light);margin-bottom:12px}
+.match-btns{display:flex;gap:8px}
+.match-yes{flex:1;padding:12px;border-radius:12px;background:var(--ink);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.match-no{padding:12px 20px;border-radius:12px;background:var(--bg);color:var(--ink-mid);border:1px solid var(--border);font-size:14px;cursor:pointer;font-family:inherit}
+.sort-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.sort-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0}
+.sort-name{font-size:15px;font-weight:700}
+.sort-stat{font-size:12px;color:var(--ink-light);margin-top:2px}
+.sort-tier{margin-left:auto;text-align:right}
+.sort-tier-name{font-size:13px;font-weight:700}
+.sort-tier-sub{font-size:10px;color:var(--ink-light)}
+.cleanup-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.cleanup-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0;background:#f5f4f0}
+.cleanup-name{font-size:15px;font-weight:700}
+.cleanup-since{font-size:11px;color:var(--ink-light);margin-top:2px}
+.cleanup-btns{margin-left:auto;display:flex;gap:6px}
+.cbtn{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;white-space:nowrap}
+.cbtn-del{color:var(--brand);border-color:var(--brand-light);background:var(--brand-light)}
+.cbtn-hold{color:#1a56db;border-color:#dce8fb;background:#e8f0fe}
+.cbtn-keep{color:#1b7a3a;border-color:#dcf0e4;background:#e8f5e9}
 </style>
 </head>
 <body>
@@ -225,7 +275,226 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
 
 <div id="app">
 
-  <!-- ══ FEED ══ -->
+  <!-- ══ ONBOARDING 1: 나를 알려줘 ══ -->
+  <div class="screen" id="scr-ob1">
+    <div class="ob-screen">
+      <div class="ob-logo">Gift<span>Shot</span></div>
+      <div class="ob-tagline">소중한 인연을 더욱 소중하게</div>
+      <div class="ob-title">나를 <em>알려줄게요</em></div>
+      <div class="ob-sub">상황에 맞는 선물을 제안해드릴게요.<br>딱 30초면 충분해요.</div>
+      <div class="ob-privacy">
+        <div class="ob-privacy-icon">🔒</div>
+        <div class="ob-privacy-text"><strong>내 폰 안에서만 돌아요</strong><br>입력하신 정보는 외부로 전송되지 않아요</div>
+      </div>
+      <div class="seg-group">
+        <div class="seg-label">나이대</div>
+        <div class="seg-row" id="age-row">
+          <button class="seg-btn" onclick="seg(this,'age','20대')">20대</button>
+          <button class="seg-btn" onclick="seg(this,'age','30대')">30대</button>
+          <button class="seg-btn" onclick="seg(this,'age','40대')">40대</button>
+          <button class="seg-btn" onclick="seg(this,'age','50대↑')">50대↑</button>
+        </div>
+      </div>
+      <div class="seg-group">
+        <div class="seg-label">성별</div>
+        <div class="seg-row" id="gender-row">
+          <button class="seg-btn" onclick="seg(this,'gender','남')">남</button>
+          <button class="seg-btn" onclick="seg(this,'gender','여')">여</button>
+        </div>
+      </div>
+      <div class="seg-group">
+        <div class="seg-label">직업</div>
+        <div class="seg-row" id="job-row">
+          <button class="seg-btn" onclick="seg(this,'job','student')">학생</button>
+          <button class="seg-btn" onclick="seg(this,'job','worker')">직장인</button>
+          <button class="seg-btn" onclick="seg(this,'job','housewife')">주부</button>
+          <button class="seg-btn" onclick="seg(this,'job','business')">사업자</button>
+        </div>
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" id="cta-ob1" onclick="goScreen('scr-ob2')" disabled>다음 → 소중한 사람 등록</button>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARDING 2: 소중한 사람 직접 등록 ══ -->
+  <div class="screen" id="scr-ob2">
+    <div class="ob-screen">
+      <div class="ob-logo">Gift<span>Shot</span></div>
+      <div class="ob-tagline">☀️ 태양 — 1촌</div>
+      <div class="ob-title"><em>가장 소중한</em><br>사람들부터</div>
+      <div class="ob-sub">직접 이름과 기념일을 입력해요.<br>연락처 매칭은 다음 단계에서 자동으로 해드릴게요.</div>
+      <div class="person-input-list">
+        <div class="person-input-row">
+          <div class="person-input-emoji">👨</div>
+          <div class="person-input-info">
+            <div class="person-input-name">아버지</div>
+            <div class="person-input-detail">생일 미입력 <button class="person-input-add" onclick="alert('생일 입력 (Phase 2)')">+ 추가</button></div>
+          </div>
+        </div>
+        <div class="person-input-row">
+          <div class="person-input-emoji">👩</div>
+          <div class="person-input-info">
+            <div class="person-input-name">어머니</div>
+            <div class="person-input-detail">생일 미입력 <button class="person-input-add" onclick="alert('생일 입력 (Phase 2)')">+ 추가</button></div>
+          </div>
+        </div>
+        <div class="person-input-row" style="border:1.5px dashed var(--border);background:transparent;cursor:pointer" onclick="alert('사람 추가 (Phase 2)')">
+          <div class="person-input-emoji">➕</div>
+          <div class="person-input-info">
+            <div class="person-input-name" style="color:var(--ink-light)">가족 추가하기</div>
+            <div class="person-input-detail">배우자, 자녀, 형제 등</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" onclick="goScreen('scr-ob3')">다음 → 연락처 불러오기</button>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARDING 3: 권한 부여 ══ -->
+  <div class="screen" id="scr-ob3">
+    <div class="ob-screen">
+      <div class="ob-logo">Gift<span>Shot</span></div>
+      <div class="ob-tagline">🔒 온디바이스 AI</div>
+      <div class="ob-title">내 폰 안에서만<br><em>조용히 분석해요</em></div>
+      <div class="ob-sub">아래 정보는 외부 서버에 절대 전송되지 않아요.<br>분석은 내 기기 안에서만 이루어져요.</div>
+      <div class="perm-list">
+        <div class="perm-item">
+          <div class="perm-icon">📱</div>
+          <div><div class="perm-name">연락처</div><div class="perm-desc">소중한 사람 자동 매칭</div></div>
+          <div class="perm-badge">필수</div>
+        </div>
+        <div class="perm-item">
+          <div class="perm-icon">📞</div>
+          <div><div class="perm-name">통화기록</div><div class="perm-desc">자주 연락한 사람 분석</div></div>
+          <div class="perm-badge">추천</div>
+        </div>
+        <div class="perm-item">
+          <div class="perm-icon">💬</div>
+          <div><div class="perm-name">문자메시지</div><div class="perm-desc">관계 온도 측정</div></div>
+          <div class="perm-badge">추천</div>
+        </div>
+        <div class="perm-item">
+          <div class="perm-icon">📸</div>
+          <div><div class="perm-name">사진첩</div><div class="perm-desc">N년 전 오늘 추억 발견</div></div>
+          <div class="perm-badge">추천</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-wrap" style="flex-direction:column;gap:8px">
+      <button class="cta-main" onclick="goScreen('scr-ob4')">권한 허용하고 시작</button>
+      <button class="btn-outline" onclick="goScreen('scr-ob4')" style="background:transparent;color:var(--ink-light);border:1px solid var(--border);border-radius:14px;padding:14px;font-size:13px;font-family:inherit;cursor:pointer">연락처만 허용</button>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARDING 4: 자동 매칭 ══ -->
+  <div class="screen" id="scr-ob4">
+    <div class="ob-screen">
+      <div class="ob-logo">Gift<span>Shot</span></div>
+      <div class="ob-tagline">연락처 자동 매칭</div>
+      <div class="ob-title">이 분이 <em>아버지</em><br>맞으세요?</div>
+      <div class="ob-sub">이름과 저장명을 분석해서 찾아봤어요.</div>
+      <div class="match-card">
+        <div class="match-header">
+          <div>
+            <div class="match-who">☀️ 태양 · 아버지</div>
+            <div class="match-tier">1촌 · 가족</div>
+          </div>
+        </div>
+        <div class="match-contact">
+          <div class="match-contact-name">아버지 👨</div>
+          <div class="match-contact-num">010-1234-5678</div>
+          <div class="match-btns">
+            <button class="match-yes" onclick="goScreen('scr-ob5')">✅ 맞아요</button>
+            <button class="match-no">다른 분이에요</button>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--ink-light);text-align:center">2명 중 1번째</div>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARDING 5: 관계 분석 결과 ══ -->
+  <div class="screen" id="scr-ob5">
+    <div class="ob-screen">
+      <div class="ob-logo">Gift<span>Shot</span></div>
+      <div class="ob-tagline">AI 관계 분석 완료</div>
+      <div class="ob-title">자주 연락한<br><em>사람들이에요</em></div>
+      <div class="ob-sub">통화·문자 빈도로 자동 분류했어요. 수정할 수 있어요.</div>
+      <div style="margin-bottom:16px">
+        <div class="sort-card">
+          <div class="sort-avatar" style="background:#fff8e1;color:#e65100">순</div>
+          <div><div class="sort-name">순자</div><div class="sort-stat">월 평균 통화 18회 · 평균 12분</div></div>
+          <div class="sort-tier"><div class="sort-tier-name">☀️ 태양</div><div class="sort-tier-sub">1촌</div></div>
+        </div>
+        <div class="sort-card">
+          <div class="sort-avatar" style="background:#e8f0fe;color:#1a56db">영</div>
+          <div><div class="sort-name">영자</div><div class="sort-stat">월 평균 통화 6회 · 메시지 많음</div></div>
+          <div class="sort-tier"><div class="sort-tier-name">🌙 달</div><div class="sort-tier-sub">2촌</div></div>
+        </div>
+        <div class="sort-card">
+          <div class="sort-avatar" style="background:#EEEDFE;color:#534AB7">상</div>
+          <div><div class="sort-name">상철</div><div class="sort-stat">월 평균 통화 2회</div></div>
+          <div class="sort-tier"><div class="sort-tier-name">⭐ 별</div><div class="sort-tier-sub">3촌</div></div>
+        </div>
+        <div class="sort-card">
+          <div class="sort-avatar" style="background:#f1efe8;color:#5f5e5a">영</div>
+          <div><div class="sort-name">영수</div><div class="sort-stat">가끔 연락</div></div>
+          <div class="sort-tier"><div class="sort-tier-name">✨ 빛</div><div class="sort-tier-sub">4촌</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" onclick="goScreen('scr-ob6')">다음 → 연락 정리하기</button>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARDING 6: 3년 미연락 정리 ══ -->
+  <div class="screen" id="scr-ob6">
+    <div class="ob-screen">
+      <div class="ob-logo">Gift<span>Shot</span></div>
+      <div class="ob-tagline">연락 정리</div>
+      <div class="ob-title">3년간 연락이<br><em>없었어요</em></div>
+      <div class="ob-sub">어떻게 할까요? 빠르게 정리해봐요.</div>
+      <div style="margin-bottom:16px">
+        <div class="cleanup-card">
+          <div class="cleanup-avatar">박</div>
+          <div><div class="cleanup-name">박영철</div><div class="cleanup-since">마지막 연락 3년 2개월 전</div></div>
+          <div class="cleanup-btns">
+            <button class="cbtn cbtn-del">삭제</button>
+            <button class="cbtn cbtn-hold">보류</button>
+            <button class="cbtn cbtn-keep">유지</button>
+          </div>
+        </div>
+        <div class="cleanup-card">
+          <div class="cleanup-avatar">김</div>
+          <div><div class="cleanup-name">김미숙</div><div class="cleanup-since">마지막 연락 4년 전</div></div>
+          <div class="cleanup-btns">
+            <button class="cbtn cbtn-del">삭제</button>
+            <button class="cbtn cbtn-hold">보류</button>
+            <button class="cbtn cbtn-keep">유지</button>
+          </div>
+        </div>
+        <div class="cleanup-card">
+          <div class="cleanup-avatar">최</div>
+          <div><div class="cleanup-name">최동훈</div><div class="cleanup-since">마지막 연락 3년 7개월 전</div></div>
+          <div class="cleanup-btns">
+            <button class="cbtn cbtn-del">삭제</button>
+            <button class="cbtn cbtn-hold">보류</button>
+            <button class="cbtn cbtn-keep">유지</button>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--brand-light);border-radius:12px;padding:12px 14px;font-size:12px;color:#b03330;line-height:1.6">
+        💛 <strong>보류</strong>로 표시하면 올해 안에 연락 제안을 드릴게요
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" onclick="finishOnboarding()">완료 → GiftShot 시작!</button>
+    </div>
+  </div>
   <div class="screen active" id="scr-feed">
     <div class="gs-hero">
       <div class="gs-hero-top">
@@ -569,6 +838,24 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
 </div>
 
 <script>
+// ── ONBOARDING ──
+const ob = { age: null, gender: null, job: null };
+
+function seg(el, group, val) {
+  document.querySelectorAll('#' + group + '-row .seg-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  ob[group] = val;
+  if (group === 'job') state.userType = val;
+  checkOb1();
+}
+function checkOb1() {
+  document.getElementById('cta-ob1').disabled = !(ob.age && ob.gender && ob.job);
+}
+function finishOnboarding() {
+  try { localStorage.setItem('gs_onboarded','1'); } catch(e){}
+  goScreen('scr-feed');
+}
+
 const state = {
   userType: null, rel: null, occ: null,
   photo: null, message: '', sendCard: false,
@@ -881,8 +1168,13 @@ function resetAll() {
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
-    setTimeout(() => document.getElementById('splash').remove(), 600);
-  }, 1200);
+    setTimeout(() => {
+      document.getElementById('splash').remove();
+      let onboarded = false;
+      try { onboarded = localStorage.getItem('gs_onboarded') === '1'; } catch(e){}
+      if (!onboarded) goScreen('scr-ob1');
+    }, 600);
+  }, 1400);
 });
 </script>
 </body>
