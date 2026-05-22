@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GiftShot — 나 대신 소중한 사람들을 챙겨줘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --brand: #E8413E;
+    --brand-light: #fff0f0;
+    --ink: #111111;
+    --ink-mid: #555555;
+    --ink-light: #999999;
+    --surface: #ffffff;
+    --bg: #f5f4f0;
+    --border: #e8e8e4;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink);
+    overscroll-behavior: none;
+  }
+
+  /* ── APP SHELL ── */
+  #app {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(24px);
+    transition: opacity .22s ease, transform .22s ease;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+  .screen.exit-left {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(245,244,240,.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 14px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-logo { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+  .topbar-logo span { color: var(--brand); }
+  .topbar-sub { font-size: 12px; color: var(--ink-light); }
+  .back-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--ink-mid);
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+  }
+  .topbar-title { font-size: 16px; font-weight: 700; }
+
+  /* ── NAV ── */
+  .bottom-nav {
+    position: sticky;
+    bottom: 0;
+    background: rgba(245,244,240,.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    font-family: inherit;
+  }
+  .nav-icon { font-size: 22px; line-height: 1; }
+  .nav-label { font-size: 10px; color: var(--ink-light); font-weight: 500; }
+  .nav-item.active .nav-label { color: var(--brand); font-weight: 700; }
+  .nav-item.active .nav-icon { filter: none; }
+
+  /* ── FEED SCREEN ── */
+  .feed-scroll { flex: 1; padding: 16px 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+  .date-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px 4px;
+  }
+  .date-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); flex-shrink: 0; animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .date-text { font-size: 13px; font-weight: 700; color: var(--ink-mid); }
+
+  /* Memory card */
+  .mem-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .mem-card:active { transform: scale(.985); }
+
+  .mem-card-top {
+    display: flex;
+    gap: 12px;
+    padding: 14px 14px 10px;
+  }
+  .mem-thumb {
+    width: 68px;
+    height: 68px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .mem-info { flex: 1; min-width: 0; }
+  .mem-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+  }
+  .src-photo { background: #e8f0fe; color: #1a56db; }
+  .src-insta { background: #fff3e0; color: #c05600; }
+  .src-ai    { background: #e8f5e9; color: #1b7a3a; }
+  .mem-title { font-size: 15px; font-weight: 700; line-height: 1.35; margin-bottom: 3px; }
+  .mem-desc  { font-size: 12px; color: var(--ink-mid); line-height: 1.55; }
+
+  .mem-people {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 14px 10px;
+  }
+  .person-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px 4px 5px;
+    font-size: 12px;
+    color: var(--ink-mid);
+  }
+  .avatar-xs {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+  .urgent { color: var(--brand); font-size: 11px; font-weight: 700; }
+
+  .ai-suggest {
+    margin: 0 14px 12px;
+    background: var(--brand-light);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 12px;
+    color: #b03330;
+    line-height: 1.55;
+  }
+  .ai-suggest strong { font-weight: 700; }
+
+  .mem-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px 14px;
+  }
+  .btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:active { transform: scale(.96); opacity: .85; }
+  .btn-primary {
+    background: var(--ink);
+    color: #fff;
+    font-size: 13px;
+    padding: 10px 16px;
+    flex: 1;
+  }
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--ink-mid);
+    font-size: 13px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-light);
+    font-size: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── SEND FLOW ── */
+  .flow-wrap { flex: 1; padding: 16px 16px 120px; display: flex; flex-direction: column; gap: 0; }
+
+  /* Progress */
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    padding: 0 0 20px;
+  }
+  .progress-dot {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background .3s;
+  }
+  .progress-dot.done { background: var(--ink); }
+  .progress-dot.active { background: var(--brand); }
+
+  .step-label { font-size: 11px; color: var(--ink-light); margin-bottom: 4px; font-weight: 500; }
+  .step-title { font-size: 22px; font-weight: 900; line-height: 1.25; margin-bottom: 20px; letter-spacing: -.5px; }
+  .step-title em { color: var(--brand); font-style: normal; }
+
+  /* Situation grid */
+  .sit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .sit-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    font-family: inherit;
+  }
+  .sit-card.selected {
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+  .sit-card.selected .sit-name { color: #fff; }
+  .sit-card.selected .sit-sub { color: #aaa; }
+  .sit-emoji { font-size: 28px; }
+  .sit-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .sit-sub { font-size: 11px; color: var(--ink-light); }
+
+  /* Sub-situation */
+  .sub-list { display: flex; flex-direction: column; gap: 8px; }
+  .sub-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: left;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sub-item.selected { border-color: var(--ink); background: var(--ink); }
+  .sub-item.selected .sub-name { color: #fff; }
+  .sub-item.selected .sub-preview { color: #888; }
+  .sub-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .sub-preview { font-size: 12px; color: var(--ink-light); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Message editor */
+  .msg-box {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--ink);
+    line-height: 1.7;
+    resize: none;
+    width: 100%;
+    min-height: 120px;
+    outline: none;
+    transition: border-color .15s;
+    margin-bottom: 8px;
+  }
+  .msg-box:focus { border-color: var(--ink); }
+  .char-count { font-size: 11px; color: var(--ink-light); text-align: right; margin-bottom: 16px; }
+
+  /* Toggle row */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .toggle-left {}
+  .toggle-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .toggle-sub { font-size: 11px; color: var(--ink-light); }
+  .toggle-switch {
+    width: 46px; height: 26px;
+    border-radius: 13px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: background .2s;
+  }
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+
+  /* Contact inputs */
+  .input-group { margin-bottom: 14px; }
+  .input-label { font-size: 12px; font-weight: 700; color: var(--ink-mid); margin-bottom: 6px; display: block; }
+  .input-field {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .input-field:focus { border-color: var(--ink); }
+  .input-field::placeholder { color: var(--border); }
+
+  /* Gift grid */
+  .gift-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .gift-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: left;
+    font-family: inherit;
+  }
+  .gift-item.selected { border-color: var(--ink); background: var(--ink); }
+  .gift-item.selected .gift-name { color: #fff; }
+  .gift-item.selected .gift-cat { color: #888; }
+  .gift-item.selected .gift-price { color: #ddd; }
+  .gift-emoji { font-size: 32px; flex-shrink: 0; }
+  .gift-info { flex: 1; }
+  .gift-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .gift-cat { font-size: 11px; color: var(--ink-light); }
+  .gift-price { font-size: 14px; font-weight: 700; color: var(--ink-mid); white-space: nowrap; }
+
+  /* Confirm */
+  .confirm-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .confirm-voucher {
+    background: var(--ink);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .voucher-brand { font-size: 11px; color: #666; }
+  .voucher-amount { font-size: 34px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+  .voucher-brand-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .voucher-tag { background: #222; border-radius: 6px; padding: 4px 8px; font-size: 11px; color: #999; }
+  .voucher-code { font-family: monospace; font-size: 11px; color: #444; letter-spacing: 1px; margin-top: 4px; }
+  .barcode { display: flex; gap: 1.5px; margin-top: 4px; }
+  .barcode-bar { height: 24px; background: #333; border-radius: 1px; }
+  .voucher-expiry { display: flex; justify-content: space-between; font-size: 10px; color: #555; }
+
+  .confirm-rows { padding: 14px 16px; }
+  .confirm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--bg);
+    gap: 12px;
+  }
+  .confirm-row:last-child { border-bottom: none; }
+  .confirm-key { font-size: 13px; color: var(--ink-light); white-space: nowrap; }
+  .confirm-val { font-size: 13px; font-weight: 700; text-align: right; }
+
+  .msg-preview {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 13px 14px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-mid);
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+
+  /* Bottom CTA */
+  .cta-wrap {
+    position: sticky;
+    bottom: 0;
+    background: rgba(245,244,240,.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+  }
+  .cta-main {
+    flex: 1;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 900;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: -.3px;
+    transition: opacity .15s, transform .1s;
+  }
+  .cta-main:active { transform: scale(.97); opacity: .85; }
+  .cta-main:disabled { background: var(--border); color: var(--ink-light); cursor: not-allowed; transform: none; }
+
+  /* Schedule */
+  .schedule-list { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .sch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .sch-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .sch-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .sch-rel { font-size: 12px; color: var(--ink-light); }
+  .sch-date-box { margin-left: auto; text-align: right; }
+  .sch-date { font-size: 15px; font-weight: 900; color: var(--brand); }
+  .sch-type { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+  .sch-dday {
+    display: inline-block;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-top: 4px;
+  }
+
+  .add-btn {
+    margin: 0 16px 16px;
+    width: calc(100% - 32px);
+    padding: 14px;
+    background: transparent;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-light);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color .15s, color .15s;
+  }
+  .add-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* Success overlay */
+  .success-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+  .success-overlay.show { opacity: 1; pointer-events: all; }
+  .success-box {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 36px 28px;
+    text-align: center;
+    max-width: 300px;
+    margin: 20px;
+  }
+  .success-emoji { font-size: 56px; margin-bottom: 14px; display: block; }
+  .success-title { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--ink-light); line-height: 1.6; margin-bottom: 24px; }
+  .success-close {
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 13px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* ── GIFTSHOT HERO ── */
+  .gs-hero {
+    background: var(--ink);
+    padding: 56px 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gs-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 40px solid rgba(232,65,62,.12);
+    pointer-events: none;
+  }
+  .gs-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    border: 24px solid rgba(255,255,255,.04);
+    pointer-events: none;
+  }
+  .gs-hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .gs-wordmark {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .gs-wordmark span { color: var(--brand); }
+  .gs-sched-btn {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 20px;
+    color: #ccc;
+    font-size: 12px;
+    font-family: inherit;
+    padding: 7px 13px;
+    cursor: pointer;
+  }
+  .gs-tagline {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+  }
+  .gs-tagline em {
+    font-style: normal;
+    color: var(--brand);
+    position: relative;
+  }
+  .gs-tagline em::after {
+    content: '';
+    position: absolute;
+    bottom: 2px; left: 0; right: 0;
+    height: 3px;
+    background: var(--brand);
+    border-radius: 2px;
+    opacity: .5;
+  }
+  .gs-concept-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .gs-concept-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #ccc;
+    white-space: nowrap;
+  }
+  .gs-pill-accent {
+    background: rgba(232,65,62,.2);
+    border-color: rgba(232,65,62,.4);
+    color: #ff8a88;
+  }
+  .gs-pill-icon { font-size: 14px; }
+  .gs-concept-plus { font-size: 14px; color: #555; font-weight: 700; }
+  .gs-stat-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 14px;
+    padding: 14px 16px;
+    gap: 0;
+  }
+  .gs-stat { flex: 1; text-align: center; }
+  .gs-stat-num { font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -.5px; }
+  .gs-stat-label { font-size: 10px; color: #666; margin-top: 3px; }
+  .gs-stat-divider { width: 1px; height: 32px; background: rgba(255,255,255,.1); }
+
+  .feed-section-header {
+    padding: 16px 16px 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  /* Update other topbar logos to GiftShot */
+  .topbar-logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+  .topbar-logo span { color: var(--brand); }
+
+  /* Splash update */
+  .splash-logo { font-size: 48px; font-weight: 900; color: #fff; letter-spacing: -2px; }
+  .splash-logo span { color: var(--brand); }
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--ink);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity .5s;
+  }
+  #splash.hide { opacity: 0; pointer-events: none; }
+  .splash-logo { font-size: 52px; font-weight: 900; color: #fff; letter-spacing: -2px; }
+  .splash-logo span { color: var(--brand); }
+  .splash-sub { font-size: 14px; color: #666; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-logo">Gift<span>Shot</span></div>
+  <div class="splash-sub">나 대신 소중한 사람들을 챙겨줘</div>
+</div>
+
+<div id="app">
+
+  <!-- ══ SCREEN: FEED ══ -->
+  <div class="screen active" id="scr-feed">
+
+    <!-- HERO -->
+    <div class="gs-hero">
+      <div class="gs-hero-top">
+        <div class="gs-wordmark">Gift<span>Shot</span></div>
+        <button class="gs-sched-btn" onclick="goScreen('scr-schedule')">📅 예약</button>
+      </div>
+
+      <div class="gs-tagline">
+        나 대신<br>소중한 사람들을<br><em>챙겨줘.</em>
+      </div>
+
+      <div class="gs-concept-row">
+        <div class="gs-concept-pill">
+          <span class="gs-pill-icon">📸</span>
+          <span>사진 속 순간</span>
+        </div>
+        <div class="gs-concept-plus">+</div>
+        <div class="gs-concept-pill">
+          <span class="gs-pill-icon">🎁</span>
+          <span>선물 한 Shot</span>
+        </div>
+        <div class="gs-concept-plus">=</div>
+        <div class="gs-concept-pill gs-pill-accent">
+          <span class="gs-pill-icon">✨</span>
+          <span>GiftShot</span>
+        </div>
+      </div>
+
+      <div class="gs-stat-row">
+        <div class="gs-stat">
+          <div class="gs-stat-num">3</div>
+          <div class="gs-stat-label">오늘의 Shot</div>
+        </div>
+        <div class="gs-stat-divider"></div>
+        <div class="gs-stat">
+          <div class="gs-stat-num">순자님</div>
+          <div class="gs-stat-label">내일 생일 🎂</div>
+        </div>
+        <div class="gs-stat-divider"></div>
+        <div class="gs-stat">
+          <div class="gs-stat-num">2년</div>
+          <div class="gs-stat-label">추억 발견</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEED SECTION HEADER -->
+    <div class="feed-section-header">
+      <div class="date-chip" style="padding:0">
+        <div class="date-dot"></div>
+        <div class="date-text">AI가 오늘 챙겨야 할 사람들을 찾았어요</div>
+      </div>
+    </div>
+
+    <div class="feed-scroll" style="padding-top:0">
+
+      <!-- Card 1 -->
+      <div class="mem-card">
+        <div class="mem-card-top">
+          <div class="mem-thumb" style="background:#e8f0fe">📸</div>
+          <div class="mem-info">
+            <div class="mem-source src-photo">📱 사진첩 · 2년 전 오늘</div>
+            <div class="mem-title">강남 팀 회식, 7명이 함께</div>
+            <div class="mem-desc">사진에서 5명을 인식했어요. 그 중 3명과 최근 연락이 없어요.</div>
+          </div>
+        </div>
+        <div class="mem-people">
+          <div class="person-chip">
+            <div class="avatar-xs" style="background:#dbeafe;color:#1e40af">상</div>
+            상철 <span class="urgent">6개월↑</span>
+          </div>
+          <div class="person-chip">
+            <div class="avatar-xs" style="background:#dcfce7;color:#166534">영</div>
+            영수 <span class="urgent">8개월↑</span>
+          </div>
+          <div class="person-chip">
+            <div class="avatar-xs" style="background:#fef9c3;color:#854d0e">옥</div>
+            옥순
+          </div>
+        </div>
+        <div class="ai-suggest">
+          <strong>AI 제안 —</strong> "2년 전 오늘 함께했던 멤버들에게 단체 연락 어때요? 오랫동안 못 본 분들도 계세요."
+        </div>
+        <div class="mem-actions">
+          <button class="btn btn-primary" onclick="startFlow('team')">단체 연락 보내기</button>
+          <button class="btn btn-ghost">건너뜀</button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="mem-card">
+        <div class="mem-card-top">
+          <div class="mem-thumb" style="background:#fff3e0">🌅</div>
+          <div class="mem-info">
+            <div class="mem-source src-insta">📷 인스타그램 · 3년 전 오늘</div>
+            <div class="mem-title">제주도 여행, 순자님 태그</div>
+            <div class="mem-desc">같이 태그됐던 4명. 순자님 내일 생일이에요 🎂</div>
+          </div>
+        </div>
+        <div class="mem-people">
+          <div class="person-chip">
+            <div class="avatar-xs" style="background:#fce7f3;color:#9d174d">순</div>
+            순자 <span class="urgent">내일 🎂</span>
+          </div>
+          <div class="person-chip">
+            <div class="avatar-xs" style="background:#ede9fe;color:#5b21b6">영</div>
+            영호
+          </div>
+        </div>
+        <div class="ai-suggest">
+          <strong>AI 제안 —</strong> "내일 순자님 생일이에요. 제주 여행 추억과 함께 선물을 보내보는 건 어때요?"
+        </div>
+        <div class="mem-actions">
+          <button class="btn btn-primary" onclick="startFlow('birthday')">선물 보내기 🎁</button>
+          <button class="btn btn-ghost">건너뜀</button>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="mem-card">
+        <div class="mem-card-top">
+          <div class="mem-thumb" style="background:#dcfce7">🤝</div>
+          <div class="mem-info">
+            <div class="mem-source src-ai">✨ AI 패턴 감지</div>
+            <div class="mem-title">영수님 — 매년 5월 연락 패턴</div>
+            <div class="mem-desc">작년 이맘때 식사를 했어요. 올해는 아직 연락이 없네요.</div>
+          </div>
+        </div>
+        <div class="mem-people">
+          <div class="person-chip">
+            <div class="avatar-xs" style="background:#dcfce7;color:#166534">영</div>
+            영수 <span style="font-size:10px;color:#166534">관계점수 87</span>
+          </div>
+        </div>
+        <div class="ai-suggest">
+          <strong>AI 제안 —</strong> "안부 인사 한 줄이면 충분해요. 관계를 이어가기 좋은 타이밍이에요."
+        </div>
+        <div class="mem-actions">
+          <button class="btn btn-primary" onclick="startFlow('biz')">안부 메시지 보내기</button>
+          <button class="btn btn-ghost">건너뜀</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: FLOW STEP 1 — 상황 ══ -->
+  <div class="screen" id="scr-step1">
+    <div class="topbar">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <div class="topbar-title">선물 보내기</div>
+      <div style="width:30px"></div>
+    </div>
+    <div class="flow-wrap">
+      <div class="progress-bar">
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+      </div>
+      <div class="step-label">1 / 4</div>
+      <div class="step-title">어떤 <em>상황</em>인가요?</div>
+      <div class="sit-grid">
+        <button class="sit-card" data-sit="business" onclick="selectSit(this,'business')">
+          <div class="sit-emoji">💼</div>
+          <div class="sit-name">비즈니스</div>
+          <div class="sit-sub">미팅·감사·제안</div>
+        </button>
+        <button class="sit-card" data-sit="romantic" onclick="selectSit(this,'romantic')">
+          <div class="sit-emoji">💕</div>
+          <div class="sit-name">연인·이성</div>
+          <div class="sit-sub">귀가·반가움</div>
+        </button>
+        <button class="sit-card" data-sit="friend" onclick="selectSit(this,'friend')">
+          <div class="sit-emoji">🎉</div>
+          <div class="sit-name">친구</div>
+          <div class="sit-sub">생일·축하·안부</div>
+        </button>
+        <button class="sit-card" data-sit="custom" onclick="selectSit(this,'custom')">
+          <div class="sit-emoji">✏️</div>
+          <div class="sit-name">직접 입력</div>
+          <div class="sit-sub">자유롭게</div>
+        </button>
+      </div>
+      <div id="sub-sit-wrap" style="display:none">
+        <div class="step-title" style="font-size:16px;margin-bottom:12px">세부 상황을 고르세요</div>
+        <div class="sub-list" id="sub-sit-list"></div>
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" id="cta-step1" onclick="goStep(2)" disabled>다음 → 메시지</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: FLOW STEP 2 — 메시지 ══ -->
+  <div class="screen" id="scr-step2">
+    <div class="topbar">
+      <button class="back-btn" onclick="goStep(1)">←</button>
+      <div class="topbar-title">메시지 작성</div>
+      <div style="width:30px"></div>
+    </div>
+    <div class="flow-wrap">
+      <div class="progress-bar">
+        <div class="progress-dot done"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+      </div>
+      <div class="step-label">2 / 4</div>
+      <div class="step-title">메시지를 <em>수정</em>하세요</div>
+      <textarea class="msg-box" id="msg-input" oninput="updateCharCount()" placeholder="메시지를 입력하세요..."></textarea>
+      <div class="char-count" id="char-count">0자</div>
+      <div class="toggle-row" id="card-toggle-row">
+        <div class="toggle-left">
+          <div class="toggle-title">📇 명함 함께 보내기</div>
+          <div class="toggle-sub">영호 · GiftShot</div>
+        </div>
+        <button class="toggle-switch" id="card-toggle" onclick="toggleCard()" style="background:#ddd">
+          <div class="toggle-knob" style="left:3px"></div>
+        </button>
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" onclick="goStep(3)">다음 → 받는 사람</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: FLOW STEP 3 — 연락처 ══ -->
+  <div class="screen" id="scr-step3">
+    <div class="topbar">
+      <button class="back-btn" onclick="goStep(2)">←</button>
+      <div class="topbar-title">받는 사람</div>
+      <div style="width:30px"></div>
+    </div>
+    <div class="flow-wrap">
+      <div class="progress-bar">
+        <div class="progress-dot done"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+      </div>
+      <div class="step-label">3 / 4</div>
+      <div class="step-title">누구에게 <em>보낼까요?</em></div>
+      <div class="input-group">
+        <label class="input-label">이름</label>
+        <input class="input-field" id="inp-name" type="text" placeholder="홍길동" oninput="checkContact()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">전화번호</label>
+        <input class="input-field" id="inp-phone" type="tel" placeholder="010-0000-0000" oninput="checkContact()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">관계 (선택)</label>
+        <input class="input-field" id="inp-rel" type="text" placeholder="예: 클라이언트, 친구, 연인">
+      </div>
+      <button class="btn btn-secondary" style="width:100%;justify-content:center;padding:12px;font-size:13px;border-radius:12px;margin-top:4px;" onclick="autofill()">
+        📱 연락처에서 불러오기
+      </button>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" id="cta-step3" onclick="goStep(4)" disabled>다음 → 선물 고르기</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: FLOW STEP 4 — 선물 ══ -->
+  <div class="screen" id="scr-step4">
+    <div class="topbar">
+      <button class="back-btn" onclick="goStep(3)">←</button>
+      <div class="topbar-title">선물 선택</div>
+      <div style="width:30px"></div>
+    </div>
+    <div class="flow-wrap">
+      <div class="progress-bar">
+        <div class="progress-dot done"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot active"></div>
+      </div>
+      <div class="step-label">4 / 4</div>
+      <div class="step-title">선물을 <em>골라요</em></div>
+      <div class="gift-grid" id="gift-list"></div>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;padding:12px;font-size:13px;border-radius:12px;" onclick="skipGift()">
+        🚫 선물 없이 메시지만 보내기
+      </button>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-main" id="cta-step4" onclick="goConfirm()">최종 확인</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: CONFIRM ══ -->
+  <div class="screen" id="scr-confirm">
+    <div class="topbar">
+      <button class="back-btn" onclick="goStep(4)">←</button>
+      <div class="topbar-title">최종 확인</div>
+      <div style="width:30px"></div>
+    </div>
+    <div class="flow-wrap">
+      <div class="confirm-card">
+        <div class="confirm-voucher">
+          <div class="voucher-brand" id="vc-brand">영호 · GiftShot</div>
+          <div class="voucher-amount" id="vc-amount">—</div>
+          <div class="voucher-brand-tags" id="vc-tags"></div>
+          <div class="voucher-code">GFT-SM07-8X91-41DQ</div>
+          <div class="barcode" id="vc-barcode"></div>
+          <div class="voucher-expiry">
+            <span>유효기간: 발행일로부터 1년</span>
+            <span>MOBILE VOUCHER</span>
+          </div>
+        </div>
+        <div class="confirm-rows">
+          <div class="confirm-row">
+            <span class="confirm-key">받는 사람</span>
+            <span class="confirm-val" id="cv-to">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-key">상황</span>
+            <span class="confirm-val" id="cv-sit">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-key">선물</span>
+            <span class="confirm-val" id="cv-gift">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-key">명함 첨부</span>
+            <span class="confirm-val" id="cv-card">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="msg-preview" id="cv-msg">—</div>
+    </div>
+    <div class="cta-wrap" style="flex-direction:column;gap:8px">
+      <button class="cta-main" onclick="sendGift()" style="background:var(--brand)">🚀 지금 보내기</button>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;padding:12px;font-size:13px;border-radius:12px;" onclick="resetAll()">처음으로</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: SCHEDULE ══ -->
+  <div class="screen" id="scr-schedule">
+    <div class="topbar">
+      <button class="back-btn" onclick="goScreen('scr-feed')">←</button>
+      <div class="topbar-title">선물 예약</div>
+      <div style="width:30px"></div>
+    </div>
+    <div class="schedule-list">
+      <div class="sch-card">
+        <div class="sch-avatar" style="background:#fce7f3;color:#9d174d">정</div>
+        <div>
+          <div class="sch-name">순자</div>
+          <div class="sch-rel">💕 가족</div>
+        </div>
+        <div class="sch-date-box">
+          <div class="sch-date">05/23</div>
+          <div class="sch-type">생일 🎂</div>
+          <div class="sch-dday">D-1</div>
+        </div>
+      </div>
+      <div class="sch-card">
+        <div class="sch-avatar" style="background:#dbeafe;color:#1e40af">김</div>
+        <div>
+          <div class="sch-name">상철</div>
+          <div class="sch-rel">💼 클라이언트</div>
+        </div>
+        <div class="sch-date-box">
+          <div class="sch-date">05/28</div>
+          <div class="sch-type">생일 🎂</div>
+          <div class="sch-dday">D-6</div>
+        </div>
+      </div>
+      <div class="sch-card">
+        <div class="sch-avatar" style="background:#ede9fe;color:#5b21b6">이</div>
+        <div>
+          <div class="sch-name">영자</div>
+          <div class="sch-rel">💕 연인</div>
+        </div>
+        <div class="sch-date-box">
+          <div class="sch-date">06/14</div>
+          <div class="sch-type">기념일 💫</div>
+          <div class="sch-dday">D-23</div>
+        </div>
+      </div>
+      <div class="sch-card">
+        <div class="sch-avatar" style="background:#dcfce7;color:#166534">박</div>
+        <div>
+          <div class="sch-name">영수</div>
+          <div class="sch-rel">🎉 친구</div>
+        </div>
+        <div class="sch-date-box">
+          <div class="sch-date">07/02</div>
+          <div class="sch-type">생일 🎂</div>
+          <div class="sch-dday">D-41</div>
+        </div>
+      </div>
+    </div>
+    <button class="add-btn" onclick="alert('새 일정 추가 (Phase 2 구현)')">+ 새 일정 추가</button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Success overlay -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-box">
+    <span class="success-emoji">🚀</span>
+    <div class="success-title">전송 완료!</div>
+    <div class="success-sub" id="success-msg">순자님께<br>선물이 전달될 예정이에요</div>
+    <button class="success-close" onclick="closeSuccess()">확인</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const state = {
+  sit: null, subSit: null, message: '', sendCard: false,
+  name: '', phone: '', rel: '',
+  gift: null, flowOrigin: 'feed'
+};
+
+const SITUATIONS = {
+  business: {
+    label: '💼 비즈니스',
+    subs: [
+      { id: 'first', label: '첫 미팅 제안', msg: '안녕하세요! 저는 영호입니다. 한 번 미팅 자리를 가져볼 수 있을까요? 짧은 시간이라도 뵙고 싶습니다 😊' },
+      { id: 'thanks', label: '미팅 후 감사', msg: '오늘 귀한 시간 내어 주셔서 진심으로 감사드립니다. 말씀 나눈 내용들 잘 새기겠습니다 🙏' },
+      { id: 'gift', label: '선물과 함께 인사', msg: '작은 마음이지만 선물과 함께 인사드립니다. 앞으로도 잘 부탁드립니다!' },
+    ]
+  },
+  romantic: {
+    label: '💕 연인·이성',
+    subs: [
+      { id: 'home', label: '귀가 인사', msg: '오늘도 고생했어 🥰 집에 잘 들어갔어? 나 네 생각 했어' },
+      { id: 'miss', label: '반가움 표시', msg: '오랜만이야~ 보고 싶었어! 잘 지냈어? 😄' },
+      { id: 'gift', label: '선물 보내기', msg: '별거 아니지만 네 생각 나서 골랐어 💝 좋아해줘~' },
+    ]
+  },
+  friend: {
+    label: '🎉 친구',
+    subs: [
+      { id: 'bday', label: '생일 축하', msg: '야! 생일 축하해!!! 🎂🎉 올해도 건강하고 행복하게 보내~ 선물 마음에 들면 좋겠다 ㅋㅋ' },
+      { id: 'congrats', label: '축하 인사', msg: '와 진짜 대단하다!! 🎊 축하해 진심으로~ 너라서 가능한 거야!' },
+      { id: 'hello', label: '그냥 안부', msg: '야 잘 지내? 갑자기 생각나서 ㅋㅋ 밥은 먹고 다니냐?' },
+    ]
+  },
+  custom: {
+    label: '✏️ 직접 입력',
+    subs: [
+      { id: 'custom', label: '자유 작성', msg: '' }
+    ]
+  }
+};
+
+const GIFTS = {
+  business: [
+    { id:'g1', emoji:'☕', name:'스타벅스 아메리카노', cat:'커피', price:'4,500원' },
+    { id:'g2', emoji:'🍰', name:'투썸플레이스 케이크', cat:'카페', price:'8,000원' },
+    { id:'g3', emoji:'📚', name:'교보문고 도서상품권', cat:'도서', price:'20,000원' },
+  ],
+  romantic: [
+    { id:'g4', emoji:'💐', name:'꽃다발 배달', cat:'꽃', price:'39,000원' },
+    { id:'g5', emoji:'🍫', name:'고디바 초콜릿', cat:'디저트', price:'25,000원' },
+    { id:'g6', emoji:'🧸', name:'곰돌이 인형', cat:'선물', price:'18,000원' },
+  ],
+  friend: [
+    { id:'g7', emoji:'🎮', name:'게임 캐시 쿠폰', cat:'게임', price:'10,000원' },
+    { id:'g8', emoji:'🍕', name:'배달의민족 쿠폰', cat:'배달', price:'15,000원' },
+    { id:'g9', emoji:'💳', name:'네이버페이 포인트', cat:'포인트', price:'20,000원' },
+  ],
+  custom: [
+    { id:'g10', emoji:'🛍️', name:'백화점 상품권', cat:'범용', price:'50,000원' },
+    { id:'g11', emoji:'💰', name:'카카오페이 머니', cat:'현금성', price:'30,000원' },
+  ]
+};
+
+// ── NAVIGATION ──
+let currentScreen = 'scr-feed';
+
+function goScreen(id) {
+  const prev = document.getElementById(currentScreen);
+  const next = document.getElementById(id);
+  if (!next || id === currentScreen) return;
+  prev.classList.remove('active');
+  prev.classList.add('exit-left');
+  setTimeout(() => prev.classList.remove('exit-left'), 300);
+  next.classList.add('active');
+  currentScreen = id;
+  next.scrollTop = 0;
+}
+
+function goBack() {
+  goScreen('scr-feed');
+}
+
+// ── FLOW ──
+function startFlow(preset) {
+  if (preset === 'birthday') {
+    state.sit = 'friend';
+    state.subSit = SITUATIONS.friend.subs[0];
+    state.message = state.subSit.msg;
+    state.name = '순자';
+    state.phone = '010-1234-5678';
+    state.rel = '가족';
+    document.getElementById('inp-name').value = state.name;
+    document.getElementById('inp-phone').value = state.phone;
+    document.getElementById('inp-rel').value = state.rel;
+    document.getElementById('msg-input').value = state.message;
+    updateCharCount();
+    checkContact();
+    renderGifts();
+    goScreen('scr-step2');
+  } else {
+    resetFlow();
+    goScreen('scr-step1');
+  }
+}
+
+function resetFlow() {
+  state.sit = null; state.subSit = null; state.message = '';
+  state.sendCard = false; state.name = ''; state.phone = ''; state.rel = ''; state.gift = null;
+  document.querySelectorAll('.sit-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('sub-sit-wrap').style.display = 'none';
+  document.getElementById('cta-step1').disabled = true;
+  document.getElementById('msg-input').value = '';
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-rel').value = '';
+  const tog = document.getElementById('card-toggle');
+  tog.style.background = '#ddd';
+  tog.querySelector('.toggle-knob').style.left = '3px';
+  document.getElementById('cta-step3').disabled = true;
+}
+
+function selectSit(el, key) {
+  document.querySelectorAll('.sit-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.sit = key;
+  state.subSit = null;
+  document.getElementById('cta-step1').disabled = true;
+
+  const wrap = document.getElementById('sub-sit-wrap');
+  const list = document.getElementById('sub-sit-list');
+  const subs = SITUATIONS[key].subs;
+
+  if (key === 'custom') {
+    state.subSit = subs[0];
+    state.message = '';
+    document.getElementById('cta-step1').disabled = false;
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+  list.innerHTML = subs.map(s => `
+    <button class="sub-item" data-id="${s.id}" onclick="selectSub(this,'${s.id}','${key}')">
+      <div class="sub-name">${s.label}</div>
+      <div class="sub-preview">${s.msg || '직접 입력...'}</div>
+    </button>`).join('');
+}
+
+function selectSub(el, id, key) {
+  document.querySelectorAll('.sub-item').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const sub = SITUATIONS[key].subs.find(s => s.id === id);
+  state.subSit = sub;
+  state.message = sub.msg;
+  document.getElementById('cta-step1').disabled = false;
+}
+
+function goStep(n) {
+  if (n === 2) {
+    document.getElementById('msg-input').value = state.message;
+    updateCharCount();
+    goScreen('scr-step2');
+  } else if (n === 1) {
+    goScreen('scr-step1');
+  } else if (n === 3) {
+    state.message = document.getElementById('msg-input').value;
+    goScreen('scr-step3');
+  } else if (n === 4) {
+    state.name = document.getElementById('inp-name').value;
+    state.phone = document.getElementById('inp-phone').value;
+    state.rel = document.getElementById('inp-rel').value;
+    renderGifts();
+    goScreen('scr-step4');
+  }
+}
+
+function updateCharCount() {
+  const v = document.getElementById('msg-input').value;
+  document.getElementById('char-count').textContent = v.length + '자';
+}
+
+function toggleCard() {
+  state.sendCard = !state.sendCard;
+  const btn = document.getElementById('card-toggle');
+  const knob = btn.querySelector('.toggle-knob');
+  btn.style.background = state.sendCard ? '#111' : '#ddd';
+  knob.style.left = state.sendCard ? '23px' : '3px';
+}
+
+function checkContact() {
+  const n = document.getElementById('inp-name').value.trim();
+  const p = document.getElementById('inp-phone').value.trim();
+  document.getElementById('cta-step3').disabled = !(n && p);
+}
+
+function autofill() {
+  document.getElementById('inp-name').value = '순자';
+  document.getElementById('inp-phone').value = '010-1234-5678';
+  document.getElementById('inp-rel').value = '가족';
+  checkContact();
+}
+
+function renderGifts() {
+  const gifts = GIFTS[state.sit] || GIFTS.custom;
+  document.getElementById('gift-list').innerHTML = gifts.map(g => `
+    <button class="gift-item${state.gift && state.gift.id === g.id ? ' selected':''}" onclick="selectGift(this,'${g.id}')">
+      <div class="gift-emoji">${g.emoji}</div>
+      <div class="gift-info">
+        <div class="gift-name">${g.name}</div>
+        <div class="gift-cat">#${g.cat}</div>
+      </div>
+      <div class="gift-price">${g.price}</div>
+    </button>`).join('');
+}
+
+function selectGift(el, id) {
+  document.querySelectorAll('.gift-item').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const allGifts = [...Object.values(GIFTS)].flat();
+  state.gift = allGifts.find(g => g.id === id);
+}
+
+function skipGift() {
+  state.gift = null;
+  document.querySelectorAll('.gift-item').forEach(c => c.classList.remove('selected'));
+  goConfirm();
+}
+
+function goConfirm() {
+  state.message = document.getElementById('msg-input').value || state.message;
+  // populate confirm
+  document.getElementById('cv-to').textContent = state.name + (state.rel ? ' · ' + state.rel : '');
+  document.getElementById('cv-sit').textContent = (SITUATIONS[state.sit]?.label || '—') + (state.subSit ? ' > ' + state.subSit.label : '');
+  document.getElementById('cv-gift').textContent = state.gift ? state.gift.emoji + ' ' + state.gift.name + ' (' + state.gift.price + ')' : '없음';
+  document.getElementById('cv-card').textContent = state.sendCard ? '✅ 영호 명함 첨부' : '미첨부';
+  document.getElementById('cv-msg').textContent = state.message || '(메시지 없음)';
+  // voucher
+  document.getElementById('vc-amount').textContent = state.gift ? state.gift.price : '—';
+  const tags = document.getElementById('vc-tags');
+  tags.innerHTML = state.gift ? `<div class="voucher-tag">${state.gift.name}</div>` : '';
+  // barcode
+  const bc = document.getElementById('vc-barcode');
+  bc.innerHTML = Array.from({length:32}, (_,i) =>
+    `<div class="barcode-bar" style="width:${[1,2,3][i%3]}px;opacity:${.3+Math.random()*.5}"></div>`
+  ).join('');
+  goScreen('scr-confirm');
+}
+
+function sendGift() {
+  const overlay = document.getElementById('success-overlay');
+  document.getElementById('success-msg').innerHTML = `${state.name}님께<br>선물이 전달될 예정이에요`;
+  overlay.classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('success-overlay').classList.remove('show');
+  resetAll();
+}
+
+function resetAll() {
+  resetFlow();
+  goScreen('scr-feed');
+}
+
+// ── SPLASH ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(() => document.getElementById('splash').remove(), 600);
+  }, 1200);
+});
+</script>
+</body>
+</html>
