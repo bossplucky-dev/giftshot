@@ -271,7 +271,7 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
         </div>
         <div class="ai-suggest"><strong>AI 제안 —</strong> "2년 전 오늘 함께했던 멤버들에게 단체 연락 어때요?"</div>
         <div class="mem-actions">
-          <button class="btn btn-primary" onclick="startFlow('worker','work','hello','p3')">연락 + 선물 보내기</button>
+          <button class="btn btn-primary" onclick="startFlow('worker','star','hello','p3')">연락 + 선물 보내기</button>
           <button class="btn btn-ghost">건너뜀</button>
         </div>
       </div>
@@ -290,7 +290,7 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
         </div>
         <div class="ai-suggest"><strong>AI 제안 —</strong> "내일 순자님 생일! 제주 여행 사진과 함께 선물을 보내볼까요?"</div>
         <div class="mem-actions">
-          <button class="btn btn-primary" onclick="startFlow('friend','friend','birthday','p2')">선물 보내기 🎁</button>
+          <button class="btn btn-primary" onclick="startFlow('friend','moon','birthday','p2')">선물 보내기 🎁</button>
           <button class="btn btn-ghost">건너뜀</button>
         </div>
       </div>
@@ -308,7 +308,7 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
         </div>
         <div class="ai-suggest"><strong>AI 제안 —</strong> "안부 인사 한 줄이면 충분해요. 관계를 이어가기 좋은 타이밍이에요."</div>
         <div class="mem-actions">
-          <button class="btn btn-primary" onclick="startFlow('business','work','thanks','p5')">안부 메시지 보내기</button>
+          <button class="btn btn-primary" onclick="startFlow('business','light','thanks','p5')">안부 메시지 보내기</button>
           <button class="btn btn-ghost">건너뜀</button>
         </div>
       </div>
@@ -376,7 +376,8 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
         <div class="progress-dot"></div>
       </div>
       <div class="step-label">2 / 5</div>
-      <div class="step-title" id="step1-title">어떤 <em>관계</em>인가요?</div>
+      <div class="step-title" id="step1-title">어떤 <em>인연</em>인가요?</div>
+      <div style="font-size:12px;color:var(--ink-light);margin:-12px 0 16px;line-height:1.6">소중한 인연을 더욱 소중하게 —<br>가까울수록 따뜻한 빛으로 표현해요 ☀️🌙⭐✨</div>
       <div class="rel-list" id="rel-list"></div>
       <div id="occ-wrap" style="display:none">
         <div class="step-title" style="font-size:18px;margin-bottom:12px">어떤 <em>상황</em>인가요?</div>
@@ -575,26 +576,44 @@ const state = {
 };
 
 const USER_RELATIONS = {
-  student:   ['family','friend','lover','special'],
-  worker:    ['family','friend','lover','work','special'],
-  housewife: ['family','friend','lover','special'],
-  business:  ['family','friend','work','special']
+  student:   ['sun','moon','star','light'],
+  worker:    ['sun','moon','star','light'],
+  housewife: ['sun','moon','star','light'],
+  business:  ['sun','moon','star','light']
 };
 
 const RELATIONS = {
-  family:  { emoji:'👨‍👩‍👧', name:'가족',       desc:'부모님·배우자·형제·자녀' },
-  friend:  { emoji:'🎉', name:'친구',           desc:'오랜 친구·절친' },
-  lover:   { emoji:'💕', name:'연인·이성친구',  desc:'소중한 그 사람' },
-  work:    { emoji:'💼', name:'직장·거래처',    desc:'동료·상사·클라이언트' },
-  special: { emoji:'⭐', name:'특별한 분',      desc:'선생님·멘토·은인' }
+  sun:   {
+    emoji:'☀️', name:'태양', tier:'1촌',
+    desc:'부부 · 가족',
+    sub:'가장 가까운 사람들',
+    bg:'#fff8e1', tc:'#e65100', badge:'#ff8c00'
+  },
+  moon:  {
+    emoji:'🌙', name:'달', tier:'2촌',
+    desc:'친척 · 절친',
+    sub:'마음을 나누는 사람들',
+    bg:'#e8f0fe', tc:'#1a56db', badge:'#4a6fa5'
+  },
+  star:  {
+    emoji:'⭐', name:'별', tier:'3촌',
+    desc:'친한 친구 · 친한 동료',
+    sub:'함께 빛나는 사람들',
+    bg:'#EEEDFE', tc:'#534AB7', badge:'#7c6fcd'
+  },
+  light: {
+    emoji:'✨', name:'빛', tier:'4촌',
+    desc:'직장동료 · 거래처',
+    sub:'인연으로 연결된 사람들',
+    bg:'#f1efe8', tc:'#5f5e5a', badge:'#888780'
+  }
 };
 
 const REL_OCCASIONS = {
-  family:  ['birthday','anniversary','thanks','holiday','justbecause'],
-  friend:  ['birthday','congrats','hello','comfort','justbecause'],
-  lover:   ['anniversary','miss','birthday','gift','justbecause'],
-  work:    ['thanks','first_meet','congrats','holiday','hello'],
-  special: ['thanks','holiday','congrats','birthday']
+  sun:   ['birthday','anniversary','thanks','holiday','justbecause','comfort'],
+  moon:  ['birthday','congrats','hello','comfort','justbecause','anniversary'],
+  star:  ['birthday','congrats','hello','comfort','justbecause'],
+  light: ['thanks','first_meet','congrats','holiday','hello']
 };
 
 const OCCASIONS = {
@@ -621,11 +640,10 @@ const MOCK_PHOTOS = [
 ];
 
 const GIFTS_BY_REL = {
-  family:  [{id:'g1',emoji:'💐',name:'꽃다발 배달',cat:'꽃·선물',price:'39,000원'},{id:'g2',emoji:'🍰',name:'케이크 쿠폰',cat:'디저트',price:'25,000원'},{id:'g3',emoji:'🛍️',name:'백화점 상품권',cat:'범용',price:'50,000원'}],
-  friend:  [{id:'g4',emoji:'🎮',name:'게임 캐시 쿠폰',cat:'게임',price:'10,000원'},{id:'g5',emoji:'🍕',name:'배달의민족 쿠폰',cat:'배달',price:'15,000원'},{id:'g6',emoji:'☕',name:'스타벅스 아메리카노',cat:'커피',price:'4,500원'}],
-  lover:   [{id:'g7',emoji:'💐',name:'꽃다발 배달',cat:'꽃',price:'39,000원'},{id:'g8',emoji:'🍫',name:'고디바 초콜릿',cat:'디저트',price:'25,000원'},{id:'g9',emoji:'🧸',name:'곰돌이 인형',cat:'선물',price:'18,000원'}],
-  work:    [{id:'g10',emoji:'☕',name:'스타벅스 아메리카노',cat:'커피',price:'4,500원'},{id:'g11',emoji:'📚',name:'교보문고 상품권',cat:'도서',price:'20,000원'},{id:'g12',emoji:'🍱',name:'고급 도시락 쿠폰',cat:'식사',price:'15,000원'}],
-  special: [{id:'g13',emoji:'🍱',name:'고급 도시락 쿠폰',cat:'식사',price:'15,000원'},{id:'g14',emoji:'🛍️',name:'백화점 상품권',cat:'범용',price:'50,000원'},{id:'g15',emoji:'☕',name:'스타벅스 아메리카노',cat:'커피',price:'4,500원'}]
+  sun:   [{id:'g1',emoji:'💐',name:'꽃다발 배달',cat:'꽃·선물',price:'39,000원'},{id:'g2',emoji:'🍰',name:'케이크 쿠폰',cat:'디저트',price:'25,000원'},{id:'g3',emoji:'🛍️',name:'백화점 상품권',cat:'범용',price:'50,000원'}],
+  moon:  [{id:'g4',emoji:'🍫',name:'고디바 초콜릿',cat:'디저트',price:'25,000원'},{id:'g5',emoji:'☕',name:'스타벅스 아메리카노',cat:'커피',price:'4,500원'},{id:'g6',emoji:'💐',name:'꽃다발 배달',cat:'꽃',price:'39,000원'}],
+  star:  [{id:'g7',emoji:'🎮',name:'게임 캐시 쿠폰',cat:'게임',price:'10,000원'},{id:'g8',emoji:'🍕',name:'배달의민족 쿠폰',cat:'배달',price:'15,000원'},{id:'g9',emoji:'☕',name:'스타벅스 아메리카노',cat:'커피',price:'4,500원'}],
+  light: [{id:'g10',emoji:'☕',name:'스타벅스 아메리카노',cat:'커피',price:'4,500원'},{id:'g11',emoji:'📚',name:'교보문고 상품권',cat:'도서',price:'20,000원'},{id:'g12',emoji:'🍱',name:'고급 도시락 쿠폰',cat:'식사',price:'15,000원'}]
 };
 
 let currentScreen = 'scr-feed';
@@ -671,9 +689,15 @@ function renderRelations() {
   const rels = USER_RELATIONS[state.userType] || [];
   document.getElementById('rel-list').innerHTML = rels.map(r => {
     const R = RELATIONS[r];
-    return `<button class="rel-item" onclick="selectRel(this,'${r}')">
-      <div class="rel-emoji">${R.emoji}</div>
-      <div><div class="rel-name">${R.name}</div><div class="rel-desc">${R.desc}</div></div>
+    return `<button class="rel-item" onclick="selectRel(this,'${r}')" style="border-left:4px solid ${R.badge}">
+      <div class="rel-emoji" style="font-size:28px">${R.emoji}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+          <div class="rel-name">${R.name}</div>
+          <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:${R.bg};color:${R.badge}">${R.tier} · ${R.desc}</span>
+        </div>
+        <div class="rel-desc">${R.sub}</div>
+      </div>
     </button>`;
   }).join('');
   state.rel = null;
@@ -762,7 +786,7 @@ function checkContact() {
 }
 
 function renderGifts() {
-  const gifts = GIFTS_BY_REL[state.rel] || GIFTS_BY_REL.friend;
+  const gifts = GIFTS_BY_REL[state.rel] || GIFTS_BY_REL.star;
   document.getElementById('gift-list').innerHTML = gifts.map(g =>
     `<button class="gift-item${state.gift && state.gift.id === g.id ? ' selected' : ''}" onclick="selectGift(this,'${g.id}')">
       <div class="gift-emoji">${g.emoji}</div>
@@ -818,7 +842,8 @@ function goConfirm() {
     document.getElementById('emo-gift-row').style.display = 'none';
   }
 
-  const relLabel = state.rel ? RELATIONS[state.rel]?.name : '—';
+  const R = state.rel ? RELATIONS[state.rel] : null;
+  const relLabel = R ? `${R.emoji} ${R.name} (${R.tier} · ${R.desc})` : '—';
   const occLabel = state.occ ? OCCASIONS[state.occ]?.label : '—';
   document.getElementById('cv-to').textContent = state.name + ' · ' + state.phone;
   document.getElementById('cv-sit').textContent = relLabel + ' › ' + occLabel;
