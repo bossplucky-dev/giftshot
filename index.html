@@ -209,6 +209,22 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
 .success-sub{font-size:14px;color:var(--ink-light);line-height:1.6;margin-bottom:24px}
 .success-close{background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 
+/* PEOPLE LIST */
+.people-tier-section{margin-bottom:20px}
+.tier-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-radius:12px;margin-bottom:8px;border-left-width:3px;border-left-style:solid}
+.tier-header-icon{font-size:22px;flex-shrink:0}
+.tier-header-name{font-size:14px;font-weight:700}
+.tier-header-desc{font-size:11px;color:var(--ink-light);margin-top:2px}
+.ppl-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.ppl-card:active{transform:scale(.98)}
+.ppl-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;flex-shrink:0}
+.ppl-info{flex:1;min-width:0}
+.ppl-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.ppl-stat{font-size:11px;color:var(--ink-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ppl-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.ppl-badge-urgent{background:var(--brand-light);color:var(--brand)}
+.ppl-badge-cold{background:#fff0f0;color:#c0392b}
+@keyframes popIn{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 /* PHOTO ATTACH */
 .photo-attach-btn{flex:1;background:var(--surface);border:1.5px dashed var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
 .photo-attach-btn.attached{border-color:var(--ink);border-style:solid;background:#f9f9f9}
@@ -969,7 +985,210 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
     <button class="add-btn">+ 소중한 사람 추가</button>
   </div>
 
-</div>
+  <!-- ══ LOADED: 불러오기 완료 ══ -->
+  <div class="screen" id="scr-loaded">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center">
+      <div style="font-size:64px;margin-bottom:20px;animation:popIn .5s ease">✅</div>
+      <div style="font-size:26px;font-weight:900;line-height:1.3;letter-spacing:-.5px;margin-bottom:12px">
+        다 불러왔어요!
+      </div>
+      <div style="font-size:15px;color:var(--ink-mid);line-height:1.7;margin-bottom:32px">
+        연락처 · 통화기록 · 사진첩을<br>조용히 분석했어요 🔒
+      </div>
+
+      <!-- 분석 결과 요약 -->
+      <div style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:32px">
+        <div style="font-size:12px;color:var(--ink-light);margin-bottom:14px;font-weight:700">분석 결과</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:var(--bg);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:22px;font-weight:900;color:var(--ink)">47</div>
+            <div style="font-size:11px;color:var(--ink-light);margin-top:3px">인식된 연락처</div>
+          </div>
+          <div style="background:var(--bg);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:22px;font-weight:900;color:var(--brand)">8</div>
+            <div style="font-size:11px;color:var(--ink-light);margin-top:3px">오늘 챙길 분</div>
+          </div>
+          <div style="background:#fff8e1;border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:22px;font-weight:900;color:#e65100">3</div>
+            <div style="font-size:11px;color:#e65100;margin-top:3px">☀️ 태양 · 1촌</div>
+          </div>
+          <div style="background:#e8f0fe;border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:22px;font-weight:900;color:#1a56db">12</div>
+            <div style="font-size:11px;color:#1a56db;margin-top:3px">🌙 달·⭐별·✨빛</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:18px;font-weight:900;color:var(--ink);margin-bottom:8px">
+        지금 챙겨야 할 사람들을<br>확인해 볼까요?
+      </div>
+      <div style="font-size:13px;color:var(--ink-light);margin-bottom:28px">3년 전 오늘 추억도 발견했어요 📸</div>
+
+      <button onclick="goScreen('scr-people-list')" style="width:100%;background:var(--ink);color:#fff;border:none;border-radius:16px;padding:18px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit;letter-spacing:-.3px">
+        확인하러 가기 →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ PEOPLE LIST: 인맥별 리스트 ══ -->
+  <div class="screen" id="scr-people-list">
+    <div class="topbar">
+      <button class="back-btn" onclick="goScreen('scr-loaded')">←</button>
+      <div class="topbar-title">챙길 사람들</div>
+      <div style="width:30px"></div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px 16px 40px">
+
+      <!-- 오늘의 포인트 -->
+      <div style="background:var(--ink);border-radius:16px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:32px">📸</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">3년 전 오늘 — 관악산 등반</div>
+          <div style="font-size:12px;color:#888">상철, 영수, 옥순님이 함께했어요</div>
+        </div>
+        <button onclick="openPersonDetail('memory')" style="margin-left:auto;background:var(--brand);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">확인</button>
+      </div>
+
+      <!-- 태양 -->
+      <div class="people-tier-section">
+        <div class="tier-header" style="border-left:3px solid #ff8c00">
+          <div class="tier-header-icon">☀️</div>
+          <div><div class="tier-header-name">태양 · 1촌</div><div class="tier-header-desc">부부 · 가족 · 3명</div></div>
+        </div>
+        <div onclick="openPersonDetail('sun1')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#fff8e1;color:#e65100">순</div>
+          <div class="ppl-info">
+            <div class="ppl-name">순자</div>
+            <div class="ppl-stat">내일 생일 🎂 · 마지막 연락 3일 전</div>
+          </div>
+          <div class="ppl-badge ppl-badge-urgent">D-1</div>
+        </div>
+        <div onclick="openPersonDetail('sun2')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#fff8e1;color:#e65100">아</div>
+          <div class="ppl-info">
+            <div class="ppl-name">아버지</div>
+            <div class="ppl-stat">결혼기념일 D-14 · 마지막 연락 1주 전</div>
+          </div>
+          <div class="ppl-badge" style="background:#fff8e1;color:#e65100">D-14</div>
+        </div>
+      </div>
+
+      <!-- 달 -->
+      <div class="people-tier-section">
+        <div class="tier-header" style="border-left:3px solid #4a6fa5">
+          <div class="tier-header-icon">🌙</div>
+          <div><div class="tier-header-name">달 · 2촌</div><div class="tier-header-desc">친척 · 절친 · 5명</div></div>
+        </div>
+        <div onclick="openPersonDetail('moon1')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#e8f0fe;color:#1a56db">영</div>
+          <div class="ppl-info">
+            <div class="ppl-name">영자</div>
+            <div class="ppl-stat">2주 전 마지막 통화 · 자주 연락</div>
+          </div>
+          <div class="ppl-badge" style="background:#e8f0fe;color:#1a56db">활발</div>
+        </div>
+        <div onclick="openPersonDetail('moon2')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#e8f0fe;color:#1a56db">영</div>
+          <div class="ppl-info">
+            <div class="ppl-name">영호</div>
+            <div class="ppl-stat">생일 D-22 · 3주 전 마지막 연락</div>
+          </div>
+          <div class="ppl-badge" style="background:#e8f0fe;color:#1a56db">D-22</div>
+        </div>
+      </div>
+
+      <!-- 별 -->
+      <div class="people-tier-section">
+        <div class="tier-header" style="border-left:3px solid #7c6fcd">
+          <div class="tier-header-icon">⭐</div>
+          <div><div class="tier-header-name">별 · 3촌</div><div class="tier-header-desc">친한 친구 · 친한 동료 · 8명</div></div>
+        </div>
+        <div onclick="openPersonDetail('star1')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#EEEDFE;color:#534AB7">상</div>
+          <div class="ppl-info">
+            <div class="ppl-name">상철</div>
+            <div class="ppl-stat">3년 전 관악산 함께 📸 · 6개월 미연락</div>
+          </div>
+          <div class="ppl-badge ppl-badge-cold">6개월↑</div>
+        </div>
+        <div onclick="openPersonDetail('star2')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#EEEDFE;color:#534AB7">옥</div>
+          <div class="ppl-info">
+            <div class="ppl-name">옥순</div>
+            <div class="ppl-stat">3년 전 관악산 함께 📸 · 8개월 미연락</div>
+          </div>
+          <div class="ppl-badge ppl-badge-cold">8개월↑</div>
+        </div>
+      </div>
+
+      <!-- 빛 -->
+      <div class="people-tier-section">
+        <div class="tier-header" style="border-left:3px solid #888780">
+          <div class="tier-header-icon">✨</div>
+          <div><div class="tier-header-name">빛 · 4촌</div><div class="tier-header-desc">직장동료 · 거래처 · 12명</div></div>
+        </div>
+        <div onclick="openPersonDetail('light1')" class="ppl-card">
+          <div class="ppl-avatar" style="background:#f1efe8;color:#5f5e5a">영</div>
+          <div class="ppl-info">
+            <div class="ppl-name">영수</div>
+            <div class="ppl-stat">매년 5월 연락 패턴 · AI 감지</div>
+          </div>
+          <div class="ppl-badge" style="background:#f1efe8;color:#5f5e5a">패턴</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PERSON DETAIL ══ -->
+  <div class="screen" id="scr-person-detail">
+    <div class="topbar">
+      <button class="back-btn" onclick="goScreen('scr-people-list')">←</button>
+      <div class="topbar-title" id="detail-title">상세 보기</div>
+      <div style="width:30px"></div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px 16px 100px">
+
+      <!-- 프로필 헤더 -->
+      <div style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px" id="detail-profile">
+        <div id="detail-avatar" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;flex-shrink:0"></div>
+        <div>
+          <div style="font-size:18px;font-weight:900" id="detail-name">—</div>
+          <div style="font-size:12px;color:var(--ink-light);margin-top:2px" id="detail-tier">—</div>
+          <div style="font-size:12px;color:var(--ink-mid);margin-top:4px" id="detail-last-contact">—</div>
+        </div>
+      </div>
+
+      <!-- 추억 사진 카드 -->
+      <div id="detail-memory-card" style="border-radius:16px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border)">
+        <div id="detail-memory-photo" style="height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative">
+          <div style="font-size:52px" id="detail-memory-emoji">🏔️</div>
+          <div style="font-size:14px;font-weight:700;opacity:.9" id="detail-memory-title">3년 전 오늘 — 관악산 등반</div>
+          <div style="font-size:11px;opacity:.6" id="detail-memory-date">2022.05.22</div>
+          <div style="position:absolute;top:10px;left:12px;background:rgba(0,0,0,.4);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px">📸 3년 전 오늘</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface)">
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px" id="detail-memory-people">함께한 사람들</div>
+          <div style="font-size:13px;color:var(--ink-mid);line-height:1.6" id="detail-memory-desc">상철, 영수, 옥순님과 함께 관악산을 올랐던 날이에요. 그때 날씨가 정말 좋았죠.</div>
+        </div>
+      </div>
+
+      <!-- AI 제안 -->
+      <div style="background:var(--brand-light);border-radius:14px;padding:14px 16px;margin-bottom:16px;border:1px solid #ffd0cf">
+        <div style="font-size:12px;font-weight:700;color:var(--brand);margin-bottom:6px">✨ GiftShot AI 제안</div>
+        <div style="font-size:14px;color:#c0392b;line-height:1.6" id="detail-ai-suggest">오랜만에 연락해 볼까요? 3년 전 관악산 사진과 함께 메시지를 보내면 더 따뜻하게 전달될 거예요.</div>
+      </div>
+
+      <!-- 액션 버튼들 -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="startFlowFromDetail()" style="width:100%;background:var(--ink);color:#fff;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+          📸 사진 + 메시지 + 선물 보내기
+        </button>
+        <button onclick="startFlowFromDetail()" style="width:100%;background:transparent;color:var(--ink);border:1.5px solid var(--border);border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+          💬 메시지만 보내기
+        </button>
+      </div>
+    </div>
+  </div>
 
 <div class="success-overlay" id="success-overlay">
   <div class="success-box">
@@ -1037,7 +1256,57 @@ function checkOb1() {
 }
 function finishOnboarding() {
   try { localStorage.setItem('gs_onboarded','1'); } catch(e){}
-  goScreen('scr-feed');
+  goScreen('scr-loaded');
+}
+
+const PEOPLE_DATA = {
+  memory: { name:'관악산 등반 멤버들', tier:'⭐ 별 · 3촌', avatar:'🏔️', avatarBg:'#ede7f6', avatarTc:'#4527a0', lastContact:'6개월↑ 미연락', memEmoji:'🏔️', memBg:'#ede7f6', memTc:'#4527a0', memTitle:'3년 전 오늘 — 관악산 등반', memDate:'2022.05.22', memPeople:'상철, 영수, 옥순', memDesc:'상철, 영수, 옥순님과 함께 관악산을 올랐던 날이에요. 힘들었지만 정상에서 보던 뷰가 너무 멋졌죠.', aiSuggest:'오랜만에 연락해 볼까요? 3년 전 관악산 사진과 함께 메시지를 보내면 더 따뜻하게 전달될 거예요 😊', rel:'star', occ:'hello' },
+  sun1:   { name:'순자', tier:'☀️ 태양 · 1촌 · 가족', avatar:'순', avatarBg:'#fff8e1', avatarTc:'#e65100', lastContact:'3일 전 마지막 연락', memEmoji:'🎂', memBg:'#fce4ec', memTc:'#880e4f', memTitle:'작년 생일파티', memDate:'2024.05.23', memPeople:'순자', memDesc:'작년 이맘때 함께 생일을 축하했어요. 내일이 생일이에요 🎂', aiSuggest:'내일 생일이에요! 작년 생일파티 사진과 함께 따뜻한 메시지를 보내볼까요?', rel:'sun', occ:'birthday' },
+  sun2:   { name:'아버지', tier:'☀️ 태양 · 1촌 · 가족', avatar:'아', avatarBg:'#fff8e1', avatarTc:'#e65100', lastContact:'1주 전 마지막 통화', memEmoji:'🌅', memBg:'#e3f2fd', memTc:'#0d47a1', memTitle:'가족 여행', memDate:'2023.08.15', memPeople:'가족', memDesc:'결혼기념일이 2주 뒤예요. 부모님께 감사 메시지와 함께 선물을 드려볼까요?', aiSuggest:'결혼기념일 D-14예요. 평소에 못 드렸던 감사한 마음을 표현해볼 좋은 기회예요.', rel:'sun', occ:'anniversary' },
+  moon1:  { name:'영자', tier:'🌙 달 · 2촌 · 절친', avatar:'영', avatarBg:'#e8f0fe', avatarTc:'#1a56db', lastContact:'2주 전 마지막 통화', memEmoji:'☕', memBg:'#fff3e0', memTc:'#7a4500', memTitle:'같이 갔던 카페', memDate:'2024.03.10', memPeople:'영자', memDesc:'자주 연락하는 소중한 친구예요. 가끔 이유 없이 선물 한 번 보내면 어떨까요?', aiSuggest:'자주 연락하는 사이지만, 이유 없이 보내는 선물이 더 특별할 때가 있어요 ✨', rel:'moon', occ:'justbecause' },
+  moon2:  { name:'영호', tier:'🌙 달 · 2촌 · 절친', avatar:'영', avatarBg:'#e8f0fe', avatarTc:'#1a56db', lastContact:'3주 전 마지막 연락', memEmoji:'🍻', memBg:'#fce4ec', memTc:'#880e4f', memTitle:'회식 했던 날', memDate:'2024.04.15', memPeople:'영호', memDesc:'생일이 22일 남았어요. 미리 준비해두면 여유롭게 챙길 수 있어요.', aiSuggest:'생일 D-22예요. 지금 미리 예약해두면 잊지 않고 챙길 수 있어요 🎂', rel:'moon', occ:'birthday' },
+  star1:  { name:'상철', tier:'⭐ 별 · 3촌 · 친한 친구', avatar:'상', avatarBg:'#EEEDFE', avatarTc:'#534AB7', lastContact:'6개월↑ 미연락', memEmoji:'🏔️', memBg:'#ede7f6', memTc:'#4527a0', memTitle:'3년 전 오늘 — 관악산 등반', memDate:'2022.05.22', memPeople:'상철, 영수, 옥순', memDesc:'3년 전 오늘 함께 관악산을 올랐어요. 그때 이후로 6개월째 연락이 없네요.', aiSuggest:'3년 전 오늘 이 사진 찍었던 거 기억나요? 오랜만에 연락해 볼까요?', rel:'star', occ:'hello' },
+  star2:  { name:'옥순', tier:'⭐ 별 · 3촌 · 친한 친구', avatar:'옥', avatarBg:'#EEEDFE', avatarTc:'#534AB7', lastContact:'8개월↑ 미연락', memEmoji:'🏔️', memBg:'#ede7f6', memTc:'#4527a0', memTitle:'3년 전 오늘 — 관악산 등반', memDate:'2022.05.22', memPeople:'상철, 영수, 옥순', memDesc:'3년 전 오늘 함께 관악산을 올랐어요. 그때 이후로 8개월째 연락이 없네요.', aiSuggest:'8개월이나 됐네요. 관악산 사진 한 장이랑 "잘 지내?" 한 마디로 시작해봐요.', rel:'star', occ:'hello' },
+  light1: { name:'영수', tier:'✨ 빛 · 4촌 · 거래처', avatar:'영', avatarBg:'#f1efe8', avatarTc:'#5f5e5a', lastContact:'AI 패턴 감지 · 매년 5월', memEmoji:'🤝', memBg:'#e8f5e9', memTc:'#1b5e20', memTitle:'작년 미팅', memDate:'2024.05.10', memPeople:'영수', memDesc:'매년 5월경에 연락이 있었어요. 올해는 아직 연락이 없네요.', aiSuggest:'작년 이맘때 함께 식사하셨어요. 올해도 가볍게 안부 드려볼까요?', rel:'light', occ:'thanks' },
+};
+
+let currentPersonKey = null;
+
+function openPersonDetail(key) {
+  currentPersonKey = key;
+  const p = PEOPLE_DATA[key];
+  if (!p) return;
+  document.getElementById('detail-title').textContent = p.name;
+  const av = document.getElementById('detail-avatar');
+  av.textContent = p.avatar;
+  av.style.background = p.avatarBg;
+  av.style.color = p.avatarTc;
+  document.getElementById('detail-name').textContent = p.name;
+  document.getElementById('detail-tier').textContent = p.tier;
+  document.getElementById('detail-last-contact').textContent = p.lastContact;
+  const memPhoto = document.getElementById('detail-memory-photo');
+  memPhoto.style.background = p.memBg;
+  memPhoto.style.color = p.memTc;
+  document.getElementById('detail-memory-emoji').textContent = p.memEmoji;
+  document.getElementById('detail-memory-title').textContent = p.memTitle;
+  document.getElementById('detail-memory-date').textContent = p.memDate;
+  document.getElementById('detail-memory-people').textContent = '함께한 사람 — ' + p.memPeople;
+  document.getElementById('detail-memory-desc').textContent = p.memDesc;
+  document.getElementById('detail-ai-suggest').textContent = p.aiSuggest;
+  goScreen('scr-person-detail');
+}
+
+function startFlowFromDetail() {
+  const p = PEOPLE_DATA[currentPersonKey];
+  if (!p) { goScreen('scr-step0'); return; }
+  state.rel = p.rel;
+  state.occ = p.occ;
+  state.message = OCCASIONS[p.occ]?.msg || '';
+  attachedPhoto = { emoji: p.memEmoji, label: p.memTitle, bg: p.memBg, tc: p.memTc, type:'memory' };
+  document.getElementById('msg-input').value = state.message;
+  updateCharCount();
+  renderGifts();
+  goScreen('scr-step3');
 }
 
 const state = {
