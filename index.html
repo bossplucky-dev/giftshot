@@ -209,6 +209,27 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
 .success-sub{font-size:14px;color:var(--ink-light);line-height:1.6;margin-bottom:24px}
 .success-close{background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 
+/* PHOTO ATTACH */
+.photo-attach-btn{flex:1;background:var(--surface);border:1.5px dashed var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
+.photo-attach-btn.attached{border-color:var(--ink);border-style:solid;background:#f9f9f9}
+/* GIFTICON CARD */
+.gifti-card{border-radius:20px;overflow:hidden;border:1px solid var(--border);margin-bottom:14px;background:var(--surface)}
+.gifti-photo{height:160px;position:relative;display:flex;align-items:center;justify-content:center}
+.gifti-photo-inner{display:flex;flex-direction:column;align-items:center;gap:8px}
+.gifti-photo-overlay{position:absolute;bottom:10px;left:12px;background:rgba(0,0,0,.4);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.gifti-msg-area{padding:18px 18px 14px;border-bottom:1px solid var(--bg)}
+.gifti-to{font-size:12px;color:var(--ink-light);margin-bottom:5px}
+.gifti-msg{font-size:14px;line-height:1.7;color:var(--ink)}
+.gifti-coupon{padding:14px 18px}
+.gifti-coupon-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.gifti-brand-logo{font-size:28px;width:48px;height:48px;background:var(--bg);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gifti-brand-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.gifti-product-name{font-size:12px;color:var(--ink-light)}
+.gifti-price-tag{margin-left:auto;font-size:16px;font-weight:900;color:var(--brand)}
+.gifti-barcode-wrap{background:var(--bg);border-radius:12px;padding:12px;text-align:center}
+.gifti-code{font-family:monospace;font-size:11px;color:var(--ink-light);letter-spacing:1px;margin-bottom:8px}
+.gifti-barcode{display:flex;justify-content:center;gap:1.5px;margin-bottom:6px}
+.gifti-expiry{font-size:10px;color:var(--ink-light)}
 /* ONBOARDING */
 .ob-screen{flex:1;display:flex;flex-direction:column;padding:32px 24px 100px}
 .ob-logo{font-size:28px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px}
@@ -289,6 +310,7 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
       <div class="seg-group">
         <div class="seg-label">나이대</div>
         <div class="seg-row" id="age-row">
+          <button class="seg-btn" onclick="seg(this,'age','10대')">10대</button>
           <button class="seg-btn" onclick="seg(this,'age','20대')">20대</button>
           <button class="seg-btn" onclick="seg(this,'age','30대')">30대</button>
           <button class="seg-btn" onclick="seg(this,'age','40대')">40대</button>
@@ -309,6 +331,7 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
           <button class="seg-btn" onclick="seg(this,'job','worker')">직장인</button>
           <button class="seg-btn" onclick="seg(this,'job','housewife')">주부</button>
           <button class="seg-btn" onclick="seg(this,'job','business')">사업자</button>
+          <button class="seg-btn" onclick="seg(this,'job','other')">기타</button>
         </div>
       </div>
     </div>
@@ -742,55 +765,175 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
         <label class="input-label">전화번호</label>
         <input class="input-field" id="inp-phone" type="tel" placeholder="010-0000-0000" oninput="checkContact()">
       </div>
+
+      <!-- 사진 첨부 -->
       <div class="input-group">
-        <label class="input-label">선물 고르기</label>
+        <label class="input-label">📸 기프티콘 상단 사진</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <button class="photo-attach-btn" id="btn-memory-photo" onclick="attachPhoto('memory')">
+            <div style="font-size:24px;margin-bottom:6px">🖼️</div>
+            <div style="font-size:13px;font-weight:700">같이 찍었던<br>추억 사진</div>
+            <div style="font-size:11px;color:var(--ink-light);margin-top:4px">사진첩에서 선택</div>
+          </button>
+          <button class="photo-attach-btn" id="btn-my-photo" onclick="attachPhoto('upload')">
+            <div style="font-size:24px;margin-bottom:6px">📷</div>
+            <div style="font-size:13px;font-weight:700">내 사진<br>첨부하기</div>
+            <div style="font-size:11px;color:var(--ink-light);margin-top:4px">직접 업로드</div>
+          </button>
+        </div>
+        <div id="photo-attach-preview" style="display:none;border-radius:14px;overflow:hidden;margin-bottom:8px;position:relative">
+          <div id="photo-attach-img" style="height:120px;display:flex;align-items:center;justify-content:center;font-size:48px"></div>
+          <div style="position:absolute;top:8px;right:8px">
+            <button onclick="removePhoto()" style="background:rgba(0,0,0,.5);border:none;color:#fff;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer">✕</button>
+          </div>
+          <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.45);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px" id="photo-attach-label">추억 사진</div>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.6;padding:8px 12px;background:var(--bg);border-radius:10px">
+          📌 사진은 기프티콘 상단에 표시돼요. 브랜드 쿠폰 이미지는 하단에 고정이에요.
+        </div>
+      </div>
+
+      <!-- 선물 고르기 -->
+      <div class="input-group">
+        <label class="input-label">🎁 선물 고르기</label>
         <div class="gift-grid" id="gift-list"></div>
         <button class="skip-photo" onclick="skipGift()" style="margin-top:4px">선물 없이 메시지만</button>
       </div>
     </div>
     <div class="cta-wrap">
-      <button class="cta-main" id="cta-step3" onclick="goConfirm()" disabled>감성 카드 미리보기 →</button>
+      <button class="cta-main" id="cta-step3" onclick="goConfirm()" disabled>기프티콘 미리보기 →</button>
     </div>
   </div>
 
-  <!-- ══ CONFIRM ══ -->
+  <!-- ══ CONFIRM — 기프티콘 미리보기 ══ -->
   <div class="screen" id="scr-confirm">
     <div class="topbar">
       <button class="back-btn" onclick="goScreen('scr-step3')">←</button>
-      <div class="topbar-title">감성 카드 미리보기</div>
+      <div class="topbar-title">기프티콘 미리보기</div>
       <div style="width:30px"></div>
     </div>
     <div class="flow-wrap">
-      <div class="emo-card">
-        <div class="emo-photo" id="emo-photo-bg">
-          <div class="emo-photo-badge">우리의 추억 📸</div>
-          <div class="emo-photo-emoji" id="emo-photo-emoji">📸</div>
-          <div class="emo-photo-label" id="emo-photo-title">함께한 그 날</div>
-          <div class="emo-photo-date" id="emo-photo-date"></div>
+
+      <!-- URL 링크 미리보기 -->
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <div style="font-size:16px">🔗</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;color:var(--ink-light)">전송될 링크</div>
+          <div style="font-size:12px;font-weight:700;color:var(--brand);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">giftshot.kr/g/SM07-8X91-41DQ</div>
         </div>
-        <div class="emo-body">
-          <div class="emo-to" id="emo-to">To. —</div>
-          <div class="emo-msg" id="emo-msg">—</div>
-          <div id="emo-gift-wrap">
-            <div class="emo-gift-row" id="emo-gift-row">
-              <div class="emo-gift-emoji" id="emo-gift-emoji">🎁</div>
-              <div>
-                <div class="emo-gift-name" id="emo-gift-name">—</div>
-                <div class="emo-gift-price" id="emo-gift-price">—</div>
-              </div>
-            </div>
+        <button onclick="goScreen('scr-url-preview')" style="background:var(--ink);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">링크 미리보기</button>
+      </div>
+
+      <!-- 기프티콘 카드 -->
+      <div class="gifti-card" id="gifti-card">
+        <!-- 상단: 사진 영역 -->
+        <div class="gifti-photo" id="gifti-photo-area">
+          <div class="gifti-photo-inner" id="gifti-photo-inner">
+            <div style="font-size:48px" id="gifti-photo-emoji">📸</div>
+            <div style="font-size:13px;font-weight:700;opacity:.8" id="gifti-photo-label">추억 사진</div>
+          </div>
+          <div class="gifti-photo-overlay">
+            <div class="gifti-from">From. 영호</div>
           </div>
         </div>
+        <!-- 중단: 메시지 -->
+        <div class="gifti-msg-area">
+          <div class="gifti-to" id="gifti-to">To. —</div>
+          <div class="gifti-msg" id="gifti-msg">—</div>
+        </div>
+        <!-- 하단: 브랜드 기프티콘 (고정) -->
+        <div class="gifti-coupon" id="gifti-coupon">
+          <div class="gifti-coupon-brand" id="gifti-brand-area">
+            <div class="gifti-brand-logo" id="gifti-brand-logo">☕</div>
+            <div>
+              <div class="gifti-brand-name" id="gifti-brand-name">스타벅스</div>
+              <div class="gifti-product-name" id="gifti-product-name">아메리카노 Tall</div>
+            </div>
+            <div class="gifti-price-tag" id="gifti-price-tag">4,500원</div>
+          </div>
+          <div class="gifti-barcode-wrap">
+            <div class="gifti-code">GFT-SM07-8X91-41DQ</div>
+            <div class="gifti-barcode" id="gifti-barcode"></div>
+            <div class="gifti-expiry">유효기간: 발행일로부터 1년 · MOBILE GIFTI</div>
+          </div>
+        </div>
+        <div class="gifti-no-gift" id="gifti-no-gift" style="display:none">
+          <div style="font-size:13px;color:var(--ink-light);text-align:center;padding:16px 0">💌 메시지만 전달돼요</div>
+        </div>
       </div>
+
       <div class="confirm-rows">
         <div class="confirm-row"><span class="confirm-key">받는 사람</span><span class="confirm-val" id="cv-to">—</span></div>
         <div class="confirm-row"><span class="confirm-key">상황</span><span class="confirm-val" id="cv-sit">—</span></div>
+        <div class="confirm-row"><span class="confirm-key">사진 첨부</span><span class="confirm-val" id="cv-photo-attach">없음</span></div>
         <div class="confirm-row"><span class="confirm-key">명함 첨부</span><span class="confirm-val" id="cv-card">—</span></div>
       </div>
     </div>
     <div class="cta-wrap" style="flex-direction:column;gap:8px">
-      <button class="cta-main" onclick="sendGift()" style="background:var(--brand)">🚀 지금 보내기</button>
+      <button class="cta-main" onclick="sendGift()" style="background:var(--brand)">🚀 링크 생성 후 전송</button>
       <button class="btn-outline" onclick="resetAll()">처음으로</button>
+    </div>
+  </div>
+
+  <!-- ══ URL 미리보기 (받는 사람 입장) ══ -->
+  <div class="screen" id="scr-url-preview">
+    <div class="topbar">
+      <button class="back-btn" onclick="goScreen('scr-confirm')">←</button>
+      <div class="topbar-title" style="font-size:13px;color:var(--ink-light)">giftshot.kr/g/SM07-8X91-41DQ</div>
+      <div style="width:30px"></div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:0 0 40px;background:#f0f0f0">
+      <!-- 브라우저 느낌 상단 -->
+      <div style="background:#fff;padding:10px 16px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;gap:8px">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#febc2e"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840"></div>
+        <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:5px 10px;font-size:11px;color:#999;margin-left:4px">giftshot.kr/g/SM07-8X91-41DQ</div>
+      </div>
+      <!-- 받은 사람 입장 카드 -->
+      <div style="max-width:360px;margin:20px auto;padding:0 16px">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:22px;font-weight:900;color:#111;letter-spacing:-.5px">Gift<span style="color:#E8413E">Shot</span></div>
+          <div style="font-size:12px;color:#999;margin-top:2px">소중한 분께 선물이 도착했어요 🎁</div>
+        </div>
+        <!-- 받은 기프티콘 -->
+        <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1)">
+          <!-- 사진 영역 -->
+          <div id="url-photo-area" style="height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative">
+            <div style="font-size:56px" id="url-photo-emoji">📸</div>
+            <div style="font-size:14px;font-weight:700;opacity:.8" id="url-photo-label">우리의 추억</div>
+            <div style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,.4);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px">From. 영호 💌</div>
+          </div>
+          <!-- 메시지 -->
+          <div style="padding:20px;border-bottom:1px solid #f0f0f0">
+            <div style="font-size:12px;color:#999;margin-bottom:6px" id="url-to">To. —</div>
+            <div style="font-size:15px;line-height:1.7;color:#222" id="url-msg">—</div>
+          </div>
+          <!-- 브랜드 기프티콘 고정 영역 -->
+          <div id="url-coupon-area" style="padding:16px 20px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+              <div style="width:48px;height:48px;border-radius:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0" id="url-brand-logo">☕</div>
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:700;margin-bottom:2px" id="url-brand-name">스타벅스</div>
+                <div style="font-size:12px;color:#999" id="url-product-name">아메리카노 Tall</div>
+              </div>
+              <div style="font-size:15px;font-weight:900;color:#E8413E" id="url-price">4,500원</div>
+            </div>
+            <!-- 바코드 -->
+            <div style="background:#f8f8f8;border-radius:12px;padding:14px;text-align:center">
+              <div style="font-family:monospace;font-size:12px;color:#888;letter-spacing:1px;margin-bottom:8px">GFT-SM07-8X91-41DQ</div>
+              <div id="url-barcode" style="display:flex;justify-content:center;gap:1.5px;margin-bottom:8px"></div>
+              <div style="font-size:10px;color:#bbb">유효기간: 발행일로부터 1년</div>
+            </div>
+          </div>
+          <div id="url-no-gift" style="display:none;padding:16px 20px;text-align:center;color:#999;font-size:13px">💌 선물 없이 마음만 담았어요</div>
+          <!-- 하단 -->
+          <div style="padding:14px 20px;background:#fafafa;border-top:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:11px;color:#bbb">Powered by GiftShot</div>
+            <button style="background:#111;color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">사용하기</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -838,7 +981,48 @@ html,body{height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif
 </div>
 
 <script>
-// ── ONBOARDING ──
+// ── PHOTO ATTACH ──
+const MOCK_ATTACH_PHOTOS = [
+  { emoji:'🌅', label:'제주도 여행', bg:'#e3f2fd', tc:'#0d47a1' },
+  { emoji:'☕', label:'카페에서', bg:'#fff3e0', tc:'#7a4500' },
+  { emoji:'🎂', label:'생일파티', bg:'#e8f5e9', tc:'#1b5e20' },
+  { emoji:'🍻', label:'팀 회식', bg:'#fce4ec', tc:'#880e4f' },
+  { emoji:'🏔️', label:'등산 갔던 날', bg:'#ede7f6', tc:'#4527a0' },
+  { emoji:'🍜', label:'맛집 탐방', bg:'#fff8e1', tc:'#f57f17' },
+];
+let attachedPhoto = null;
+
+function attachPhoto(type) {
+  const idx = Math.floor(Math.random() * MOCK_ATTACH_PHOTOS.length);
+  attachedPhoto = MOCK_ATTACH_PHOTOS[idx];
+  const prev = document.getElementById('photo-attach-preview');
+  const img = document.getElementById('photo-attach-img');
+  const lbl = document.getElementById('photo-attach-label');
+  img.style.background = attachedPhoto.bg;
+  img.textContent = attachedPhoto.emoji;
+  lbl.textContent = type === 'memory' ? '추억 사진 📸' : '내 사진 📷';
+  attachedPhoto.type = type;
+  prev.style.display = 'block';
+  document.getElementById('btn-memory-photo').classList.toggle('attached', type==='memory');
+  document.getElementById('btn-my-photo').classList.toggle('attached', type==='upload');
+}
+
+function removePhoto() {
+  attachedPhoto = null;
+  document.getElementById('photo-attach-preview').style.display = 'none';
+  document.getElementById('btn-memory-photo').classList.remove('attached');
+  document.getElementById('btn-my-photo').classList.remove('attached');
+}
+
+function makeBarcode(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = Array.from({length:36}, (_,i) =>
+    `<div style="width:${[1,2,1,3][i%4]}px;height:36px;background:#222;border-radius:1px;opacity:${.3+Math.random()*.6}"></div>`
+  ).join('');
+}
+
+
 const ob = { age: null, gender: null, job: null };
 
 function seg(el, group, val) {
@@ -1101,40 +1285,55 @@ function goConfirm() {
   state.phone = document.getElementById('inp-phone').value;
   state.message = document.getElementById('msg-input').value || state.message;
 
-  const ph = state.photo;
-  if (ph) {
-    document.getElementById('emo-photo-bg').style.background = ph.bg;
-    document.getElementById('emo-photo-emoji').textContent = ph.emoji;
-    document.getElementById('emo-photo-title').style.color = ph.tc;
-    document.getElementById('emo-photo-title').textContent = ph.title;
-    document.getElementById('emo-photo-date').style.color = ph.tc;
-    document.getElementById('emo-photo-date').textContent = ph.date;
-  } else {
-    document.getElementById('emo-photo-bg').style.background = '#f5f4f0';
-    document.getElementById('emo-photo-emoji').textContent = '💌';
-    document.getElementById('emo-photo-title').textContent = '마음을 담은 메시지';
-    document.getElementById('emo-photo-title').style.color = '#555';
-    document.getElementById('emo-photo-date').textContent = '';
+  const ph = attachedPhoto || state.photo;
+  const photoBg = ph ? ph.bg : '#f0f0ee';
+  const photoEmoji = ph ? ph.emoji : '💌';
+  const photoLabel = ph ? ph.label : '마음을 담은 메시지';
+
+  // 기프티콘 카드 업데이트
+  document.getElementById('gifti-photo-area').style.background = photoBg;
+  document.getElementById('gifti-photo-emoji').textContent = photoEmoji;
+  document.getElementById('gifti-photo-emoji').style.color = ph?.tc || '#666';
+  document.getElementById('gifti-photo-label').textContent = photoLabel;
+  document.getElementById('gifti-to').textContent = 'To. ' + state.name;
+  document.getElementById('gifti-msg').textContent = state.message;
+
+  const hasGift = !!state.gift;
+  document.getElementById('gifti-coupon').style.display = hasGift ? 'block' : 'none';
+  document.getElementById('gifti-no-gift').style.display = hasGift ? 'none' : 'block';
+  if (hasGift) {
+    document.getElementById('gifti-brand-logo').textContent = state.gift.emoji;
+    document.getElementById('gifti-brand-name').textContent = state.gift.name;
+    document.getElementById('gifti-product-name').textContent = '#' + state.gift.cat;
+    document.getElementById('gifti-price-tag').textContent = state.gift.price;
+    makeBarcode('gifti-barcode');
   }
 
-  document.getElementById('emo-to').textContent = 'To. ' + state.name;
-  document.getElementById('emo-msg').textContent = state.message;
-
-  if (state.gift) {
-    document.getElementById('emo-gift-row').style.display = 'flex';
-    document.getElementById('emo-gift-emoji').textContent = state.gift.emoji;
-    document.getElementById('emo-gift-name').textContent = state.gift.name;
-    document.getElementById('emo-gift-price').textContent = state.gift.price;
-  } else {
-    document.getElementById('emo-gift-row').style.display = 'none';
+  // URL 미리보기 카드 동기화
+  document.getElementById('url-photo-area').style.background = photoBg;
+  document.getElementById('url-photo-emoji').textContent = photoEmoji;
+  document.getElementById('url-photo-label').textContent = photoLabel;
+  document.getElementById('url-to').textContent = 'To. ' + state.name;
+  document.getElementById('url-msg').textContent = state.message;
+  document.getElementById('url-coupon-area').style.display = hasGift ? 'block' : 'none';
+  document.getElementById('url-no-gift').style.display = hasGift ? 'none' : 'block';
+  if (hasGift) {
+    document.getElementById('url-brand-logo').textContent = state.gift.emoji;
+    document.getElementById('url-brand-name').textContent = state.gift.name;
+    document.getElementById('url-product-name').textContent = '#' + state.gift.cat;
+    document.getElementById('url-price').textContent = state.gift.price;
+    makeBarcode('url-barcode');
   }
 
+  // 요약 rows
   const R = state.rel ? RELATIONS[state.rel] : null;
-  const relLabel = R ? `${R.emoji} ${R.name} (${R.tier} · ${R.desc})` : '—';
+  const relLabel = R ? R.emoji+' '+R.name+' ('+R.tier+')' : '—';
   const occLabel = state.occ ? OCCASIONS[state.occ]?.label : '—';
   document.getElementById('cv-to').textContent = state.name + ' · ' + state.phone;
   document.getElementById('cv-sit').textContent = relLabel + ' › ' + occLabel;
-  document.getElementById('cv-card').textContent = state.sendCard ? '✅ 영호 명함 첨부' : '미첨부';
+  document.getElementById('cv-photo-attach').textContent = ph ? (ph.type==='memory'?'추억 사진 📸':'내 사진 📷') : '없음';
+  document.getElementById('cv-card').textContent = state.sendCard ? '✅ 명함 첨부' : '미첨부';
+
   goScreen('scr-confirm');
 }
 
